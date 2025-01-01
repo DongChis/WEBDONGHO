@@ -1,0 +1,106 @@
+@use "sass:map";
+@import "src/style/pages/theme";
+
+footer {
+  background: #ececec;
+  padding-top: 70px;
+  padding-bottom: 0;
+
+  .footer__about {
+    margin-bottom: 15px;
+
+    .footer__about__logo {
+      margin-bottom: 15px;
+      display: inline-block;
+      font-size: 25px;
+      font-weight: 700;
+    }
+
+    ul li {
+      font-size: 14px;
+      list-style: none;
+      line-height: 36px;
+      color: map.get($theme-color, "bold-text");
+    }
+  }
+
+  .footer__widget {
+    margin-bottom: 30px;
+    overflow: hidden;
+    h6 {
+      color: map.get($theme-color, "bold-text");
+      margin-bottom: 10px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    ul {
+      li {
+        list-style: none;
+        float: left;
+        width: 50%;
+        a {
+          color: map.get($theme-color, "bold-text");
+          font-size: 14px;
+          line-height: 32px;
+          text-decoration: none;
+        }
+      }
+    }
+    p {
+      font-size: 14px;
+      color: map.get($theme-color,"main-text");
+      margin-bottom: 30px;
+    }
+    form {
+      margin-bottom: 30px;
+
+      .input-group {
+        display: flex;
+        align-items: center;
+
+        input {
+          width: 100%;
+          font-size: 16px;
+          padding-left: 20px;
+          height: 46px;
+          color: map.get($theme-color,"main-text");
+          border: 1px solid white;
+
+          ::placeholder {
+            color: map.get($theme-color,"main-text");
+          }
+        }
+        button {
+          padding: 0 26px;
+          height: 46px;
+          min-width: max-content;
+        }
+      }
+    }
+  }
+  .footer__widget__social {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+
+    div {
+      :hover {
+        background: map.get($theme-color,"main");
+        color: white;
+        border-color: white;
+
+      }
+      svg {
+        font-size: 20px;
+        color: white;
+        padding: 10px;
+        border: 1px solid #c4c4c4;
+        border-radius: 50%;
+        transition: all, 0.3s;
+        background: #9898d3;
+        cursor: pointer;
+      }
+    }
+  }
+}

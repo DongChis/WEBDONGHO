@@ -1,0 +1,118 @@
+@use "sass:map";
+@import "theme";
+@import "reponsive";
+
+html,
+body {
+  margin: 0;
+}
+* {
+  font-family: "Arial";
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 1170px;
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: auto;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.col-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+.col-lg-3 {
+  flex: 0 0 25%;
+  max-width: 25%;
+}
+.col-lg-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+.col-lg-9 {
+  flex: 0 0 75%;
+  max-width: 75%;
+}
+.button-submit {
+  font-size: 14px;
+  color: white;
+  font-weight: 800;
+  text-transform: uppercase;
+  display: inline-block;
+  padding: 16px 13px 17px ;
+  background: map.get($theme-color, "main");
+  height: 100%;
+  border: none;
+
+}
+
+/* src/styles/alert.css */
+
+.alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  10%, 90% { opacity: 1; }
+}
+
+@include Reponsive($DESKTOP) {
+  .col-xl-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+  .col-xl-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+@include Reponsive($TABLET_DEVICE) {
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  .col-md-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+@include Reponsive($MEDIUM_DEVICE) {
+  .col-lg-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+@include Reponsive($WIDE_MOBILE) {
+  .col-sm-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  .col-sm-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+@include Reponsive($SMALL_DEVICES) {
+  .col-sx-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+
+

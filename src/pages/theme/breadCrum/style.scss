@@ -1,0 +1,46 @@
+@use "sass:map";
+@import "src/style/pages/theme";
+
+.breadCrumb {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  padding: 45px 0 40px;
+  justify-content: center;
+  line-height: 10px;
+  text-align: center;
+  background: map.get($theme-color,"main");
+
+  .breadCrumb-text {
+    color: white;
+
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    ul {
+
+      display: flex;
+      list-style: none;
+      column-gap: 10px;
+
+      li {
+        text-decoration: underline;
+        color: map.get($theme-color,"decription");
+
+        a {
+          text-decoration: none;
+          color: white;
+        }
+
+        &.link {
+          text-decoration: none;
+          :hover {
+            color: map.get($theme-color,"decription");
+          }
+        }
+      }
+    }
+  }
+}

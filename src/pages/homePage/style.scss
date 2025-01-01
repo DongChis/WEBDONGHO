@@ -1,0 +1,196 @@
+@use "sass:map";
+@import "src/style/pages/theme";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+@import "react-tabs/style/react-tabs.css";
+
+
+$theme-color: (
+        main: #007bff,
+        normal-text: #333,
+        secondary: #28a745,
+        hover-main: #0056b3,
+        hover-secondary: #218838
+);
+
+
+.container {
+  .section-title {
+    margin-top: 50px;
+    text-align: center;
+
+    h2 {
+      margin-bottom: 40px;
+      position: relative;
+
+    }
+  }
+
+  .slider-content {
+    .slider-content-items {
+      height: 350px;
+      position: relative;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: top center;
+      left: 39%;
+
+      img {
+        background-color: #c71313;
+        margin-top: 30px;
+        height: 250px;
+      }
+
+      p {
+        position: absolute;
+        bottom: 0;
+        text-align: center;
+        font-size: 18px;
+        color: map.get($theme-color, "normal-text");
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        padding: 10px 0px 10px;
+        width: 270px;
+        cursor: pointer;
+
+        &:hover {
+          background: rgb(237, 237, 237);
+        }
+      }
+    }
+  }
+
+  .react-tabs {
+    ul {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 50px;
+
+      li {
+        list-style: none;
+        font-size: 18px;
+        color: map.get($theme-color, "normal-text");
+        display: inline-block;
+        margin-right: 25px;
+        position: relative;
+        cursor: pointer;
+
+        &.react-tabs__tab--selected {
+          color: map.get($theme-color, "main");
+          font-weight: bold;
+          border-bottom: 2px solid map.get($theme-color, "main");
+        }
+      }
+    }
+  }
+
+  .product-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 20px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 300px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;  // Ensure items are centered horizontally
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+
+    .product-name {
+      font-size: 20px;
+      margin: 10px 0;
+      color: map.get($theme-color, "normal-text");
+      transition: color 0.3s ease;
+      text-decoration: none !important;
+
+      &:hover {
+        color: map.get($theme-color, "main");
+        text-decoration: none !important;
+      }
+    }
+
+    .product-description {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-price {
+      font-size: 18px;
+      color: map.get($theme-color, "main");
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-view,
+    .btn-add-to-cart {
+      position: relative;
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      text-transform: uppercase;
+      text-decoration: none;
+      background-color: map.get($theme-color, "main");
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        background-color: map.get($theme-color, "hover-main");
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .btn-view {
+      background-color: map.get($theme-color, "secondary");
+
+      &:hover {
+        background-color: map.get($theme-color, "hover-secondary");
+      }
+    }
+
+    .product-views {
+      opacity: 0.5;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "eS6",
+    "baseUrl": "./src"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "include": ["src/**/*"]
+}

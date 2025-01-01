@@ -1,0 +1,131 @@
+.container-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.product-detail-container {
+  display: flex;
+  gap: 20px;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 1000px;
+  width: 100%;
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.product-detail-image {
+  img {
+    border: 2px solid #9f9e9e;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+}
+
+.product-detail-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+
+  .product-detail-name {
+    margin-top: 0;
+    font-size: 50px;
+    color: #333;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .product-detail-description {
+    font-size: 20px;
+    color: #666;
+    margin: 10px 0;
+    line-height: 1.5;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  .product-detail-price {
+    font-size: 25px;
+    color: #e60023;
+    margin-top: 10px;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+  }
+}
+
+.product-detail-specifications {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 1000px;
+  background-color: #f9f9f9;
+  padding: 20px;
+
+
+
+  .specifications-header {
+    font-size: 24px;
+    color: #333;
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: 10px;
+  }
+
+  .specifications-list {
+    list-style: none;
+    padding: 0;
+
+    li {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 5px;
+      font-family: 'Open Sans', sans-serif;
+
+      a {
+        color: #007bff;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      strong {
+        color: #333;
+      }
+    }
+  }
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+
+  .add-cart{
+    padding: 15px 30px;
+    width: 200px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  .add-cart {
+    background-color: #ef0a0a;
+
+    &:hover {
+      background-color: #0a0b77;
+    }
+  }
+
+
+}
