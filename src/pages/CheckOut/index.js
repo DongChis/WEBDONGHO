@@ -6,7 +6,7 @@ import BreadCrumb from "../theme/breadCrum";
 import bankLogo from '../../assets/image/bidv-logo.png';
 import momoLogo from '../../assets/image/momo-logo.png';
 import Notification from '../NotificationBox/Notification';
-import { clearCart } from '../../redux/Slice/productSlice';
+import { clearCart } from '../../redux/Slice/cartSlice';
 
 
 
