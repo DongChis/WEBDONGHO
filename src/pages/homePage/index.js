@@ -7,11 +7,9 @@ import "slick-carousel/slick/slick-theme.css";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import "./style.scss";
-import productAll from "../../data/dataAll";
-import productHotData from "../../data/productHot";
 import "./tag.scss";
 import "pages/Profile/style.scss";
-import { loadProductHot, loadProducts } from '../../redux/Slice/productSlice';
+import { loadProductHot, loadProducts,fetchProducts } from '../../redux/Slice/productSlice';
 import { loadProductHotSelector, loadProductsSelector } from '../../redux/Slice/productSlice';
 import { Product } from "../../component/Product/Product";
 
@@ -21,11 +19,22 @@ const HomePage = () => {
     const products = useSelector(loadProductsSelector);
     const [recentlyViewed, setRecentlyViewed] = useState([]);
     useEffect(() => {
+        // Gọi API để tải danh sách sản phẩm và sản phẩm nổi bật
+        const fetchData = async () => {
+            try {
+                // Gọi API cho sản phẩm nổi bật
+                const allProductsData = await dispatch(fetchProducts()).unwrap(); // Nhận dữ liệu sản phẩm từ API
 
-        dispatch(loadProductHot({ productHot: productHotData }));
-        dispatch(loadProducts({products :productAll}));
 
-        const storedRecentlyViewed = localStorage.getItem('recentlyViewed');
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu sản phẩm:", error);
+            }
+        };
+
+        fetchData();
+
+        // Lấy danh sách sản phẩm đã xem từ localStorage
+        const storedRecentlyViewed = localStorage.getItem("recentlyViewed");
         if (storedRecentlyViewed) {
             setRecentlyViewed(JSON.parse(storedRecentlyViewed));
         }
@@ -82,8 +91,13 @@ const HomePage = () => {
     };
 
     const groupProductsByTitle = (data) => {
+        // Ensure 'data' is a valid array before calling 'reduce'
+        if (!Array.isArray(data)) {
+            return {};  // Return an empty object if 'data' is not an array
+        }
+
         return data.reduce((acc, product) => {
-            if (!product || !product.title) return acc;
+            if (!product || !product.title) return acc; // Ensure each product has a title
             const { title } = product;
             if (!acc[title]) {
                 acc[title] = [];
@@ -157,12 +171,12 @@ const HomePage = () => {
     };
 
     const groupedProducts = groupProductsByTitle(products);
-    const groupedProductHot = groupProductsByTitle(hotProduct);
-
+    // const groupedProductHot = groupProductsByTitle(hotProduct);
+    console.log("product: "+products.length);
     return (
         <>
             {products.length >= 0 && renderProducts(groupedProducts, "THƯƠNG HIỆU ĐỒNG HỒ")}
-            {hotProduct.length >= 0 && renderProducts(groupedProductHot, "SẢN PHẨM MỚI RA MẮT")}
+            {/*{hotProduct.length >= 0 && renderProducts(groupedProductHot, "SẢN PHẨM MỚI RA MẮT")}*/}
             {renderRecentlyViewed()}
         </>
     );

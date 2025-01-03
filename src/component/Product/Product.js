@@ -26,18 +26,18 @@ export function Product({ data, onView }) {
         if (!product || !product.id) return;
 
         if (isAuthenticated) {
-            alert('Sản phẩm đã được thêm vào giỏ hàng!');
+            console.log("san pham đã được thêm");
             dispatch(addToCart(product));
 
-            // toast.success("Sản phẩm đã được thêm vào giỏ hàng!", {
-            //     position: "top-right",
-            //     autoClose: 3000,
-            //     hideProgressBar: false,
-            //     closeOnClick: true,
-            //     pauseOnHover: true,
-            //     draggable: true,
-            //     progress: undefined,
-            // });
+            toast.success("Sản phẩm đã được thêm vào giỏ hàng!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         } else {
             alert('Bạn cần đăng nhập');
         }
