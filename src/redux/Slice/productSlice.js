@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../api/axoisClient";
-
+import { fetchProducts } from '../../api/loadProduct';
 // **Trạng thái ban đầu**
 const initialState = {
     products: [],
@@ -10,13 +10,6 @@ const initialState = {
     error: null,
 };
 
-// **Async Thunk: Gọi API để lấy danh sách sản phẩm**
-export const fetchProducts = createAsyncThunk("products/fetchProducts", async () => {
-    const response = await axios.get("https://localhost:7032/api/v1/product"); // Endpoint API
-    console.log("Dữ liệu từ API (object):", response); // Log dữ liệu trả về
-
-    return response;// Trả về dữ liệu sản phẩm
-});
 
 // **Slice**
 const productSlice = createSlice({

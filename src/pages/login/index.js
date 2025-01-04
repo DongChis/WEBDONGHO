@@ -13,6 +13,7 @@ const LoginModal = ({ isOpen, onClose }) => {
         username: "",
         password: "",
         email: "", // Chỉ dùng khi đăng ký
+        rePassword: "", // Trường xác nhận mật khẩu
     });
 
     const [error, setError] = useState(""); // State để lưu thông báo lỗi
@@ -77,17 +78,20 @@ const LoginModal = ({ isOpen, onClose }) => {
 
     // Xử lý đăng ký
     const handleRegister = async (e) => {
-
+        e.preventDefault();
         setSuccess("");
         setError("");
-        e.preventDefault();
+
 
         // Kiểm tra dữ liệu đầu vào trước khi gửi yêu cầu đăng ký
-        if (!formData.username || !formData.password || !formData.email) {
+        if (!formData.username || !formData.password || !formData.email || !formData.rePassword) {
             setError("Vui lòng nhập đầy đủ thông tin.");
             return;
         }
-
+        if(formData.password !== formData.rePassword) {
+            setError("Mật khẩu và xác nhận mật khẩu không khớp.");
+            return;
+        }
 
             dispatch(registerStart()); // Đặt trạng thái đăng ký đang tải
         try {
@@ -165,6 +169,15 @@ const LoginModal = ({ isOpen, onClose }) => {
                             required
                         />
                     </div>
+                    {isRegister && (<div className = "input-group">
+                        <label htmlFor="re-password">Xác Nhận mật khẩu</label>
+                        <input type="password"
+                        id="re-password"
+                        name="re-password"
+                        value = {formData.password}
+                        onChange={handleChange}
+                        required/>
+                    </div>)}
                     {error && <p className="error">{error}</p>}
                     {success && <p className="success">{success}</p>}
                     <button type="submit" disabled={loading}>
@@ -174,8 +187,8 @@ const LoginModal = ({ isOpen, onClose }) => {
 
                 <p className="toggle-register">
                     {isRegister ? "Đã có tài khoản?" : "Chưa có tài khoản?"}
-                    <span onClick={() => toggleForm()}>
-                        {isRegister ? "Đăng nhập" : "Đăng ký"}
+                    <span onClick={() => toggleForm()}  className="toggle-link">
+                       {isRegister ? <a href="#">Đăng nhập</a> : <a href="#">Đăng ký</a>}
                     </span>
                 </p>
             </div>
