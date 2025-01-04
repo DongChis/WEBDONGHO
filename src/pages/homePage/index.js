@@ -9,7 +9,7 @@ import 'react-tabs/style/react-tabs.css';
 import "./style.scss";
 import "./tag.scss";
 import "pages/Profile/style.scss";
-import { loadProductHot, loadProducts,fetchProducts } from '../../redux/Slice/productSlice';
+import { fetchProducts } from '../../api/loadProduct';
 import { loadProductHotSelector, loadProductsSelector } from '../../redux/Slice/productSlice';
 import { Product } from "../../component/Product/Product";
 
@@ -24,8 +24,6 @@ const HomePage = () => {
             try {
                 // Gọi API cho sản phẩm nổi bật
                 const allProductsData = await dispatch(fetchProducts()).unwrap(); // Nhận dữ liệu sản phẩm từ API
-
-
             } catch (error) {
                 console.error("Lỗi khi tải dữ liệu sản phẩm:", error);
             }
@@ -169,10 +167,10 @@ const HomePage = () => {
             </div>
         );
     };
-
-    const groupedProducts = groupProductsByTitle(products);
+    const productsArray = Array.isArray(products) ? products : Object.values(products);
+    const groupedProducts = groupProductsByTitle(productsArray);
     // const groupedProductHot = groupProductsByTitle(hotProduct);
-    console.log("product: "+products.length);
+    console.log("product: "+groupedProducts);
     return (
         <>
             {products.length >= 0 && renderProducts(groupedProducts, "THƯƠNG HIỆU ĐỒNG HỒ")}

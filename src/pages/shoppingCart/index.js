@@ -10,12 +10,12 @@ const ShoppingCart = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const parsePrice = (priceString) => {
-        return  parseFloat(priceString.replace(/\./g, '')) ;
-    };
+    // const parsePrice = (priceString) => {
+    //     return  parseFloat(priceString.replace(/\./g, '')) ;
+    // };
 
     const calculateTotalPrice = () => {
-        return cartItems.reduce((total, item) => total + parsePrice(item.price) * (item.quantity || 1), 0);
+        return cartItems.reduce((total, item) => total + item.price * (item.quantity || 1), 0);
     };
 
     const handleCheckout = () => {
@@ -47,7 +47,7 @@ const ShoppingCart = () => {
                             <img src={item.productImageUrl} alt={item.title} />
                             <div className="item-details">
                                 <p>{item.name}</p>
-                                <p>Giá: {parsePrice(item.price).toLocaleString('de-DE')} VND</p>
+                                <p>Giá: {item.price} VND</p>
                                 <div className="quantity-controls">
                                     <button onClick={() => handleDecreaseQuantity(item)}>-</button>
                                     <span>{item.quantity || 1}</span>

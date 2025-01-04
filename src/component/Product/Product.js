@@ -23,21 +23,14 @@ export function Product({ data, onView }) {
     }, [data.id]);
 
     const handleAddToCart = (product) => {
-        if (!product || !product.id) return;
+        if (!product || !product.id) {
+            console.error("Sản phẩm không hợp lệ:", product);
+            return;
+        }
 
         if (isAuthenticated) {
-            console.log("san pham đã được thêm");
             dispatch(addToCart(product));
-
-            toast.success("Sản phẩm đã được thêm vào giỏ hàng!", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
+            console.log("Sản phẩm đã được thêm:", product);
         } else {
             alert('Bạn cần đăng nhập');
         }
