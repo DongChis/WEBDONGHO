@@ -173,8 +173,8 @@ const LoginModal = ({ isOpen, onClose }) => {
                         <label htmlFor="re-password">Xác Nhận mật khẩu</label>
                         <input type="password"
                         id="re-password"
-                        name="re-password"
-                        value = {formData.password}
+                        name="rePassword"
+                        value = {formData.rePassword}
                         onChange={handleChange}
                         required/>
                     </div>)}
