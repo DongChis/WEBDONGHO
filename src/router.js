@@ -10,6 +10,7 @@ import ProductDetail, {loadProduct} from "./pages/ProductDetail";
 import ContactPage from "./pages/contactPage";
 import ReviewPage from "./pages/reviewPage";
 import Login from "./pages/login";
+import Admin from "./pages/admin/admin";
 
 
 function RenderRouter() {
@@ -51,6 +52,10 @@ function RenderRouter() {
             path: ROUTERS.pages.LOGIN,
             component: <Login/>,
         },
+        {
+            path: ROUTERS.pages.ADMIN,
+            component: <Admin/>,
+        }
     ];
 
     return (
