@@ -52,17 +52,14 @@ function RenderRouter() {
             path: ROUTERS.pages.LOGIN,
             component: <Login/>,
         },
-        {
-            path: ROUTERS.pages.ADMIN,
-            component: <Admin/>,
-        }
+
     ];
 
     return (
         <MasterLayout>
             <Routes>
                 {pageRouter.map((item, key) => (
-                    <Route key={key} path={item.path} element={item.component} />
+                    <Route key={key} path={item.path} element={item.component}/>
                 ))}
             </Routes>
         </MasterLayout>
