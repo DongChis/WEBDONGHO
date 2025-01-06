@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import "./style.scss";
 import {loginFailure, loginStart,loginSuccess,registerStart,registerSuccess,registerFailure} from "../../redux/Slice/authSlice";
 import { loginUserAPI,registerUserAPI } from "../../api/user";
+import { useNavigate } from "react-router-dom"; // Để sử dụng điều hướng
 
 const LoginModal = ({ isOpen, onClose }) => {
     const dispatch = useDispatch();
@@ -13,13 +14,14 @@ const LoginModal = ({ isOpen, onClose }) => {
         username: "",
         password: "",
         email: "", // Chỉ dùng khi đăng ký
+        rePassword: "", // Trường xác nhận mật khẩu
     });
 
     const [error, setError] = useState(""); // State để lưu thông báo lỗi
     const [success, setSuccess] = useState("");
     const [isRegister, setIsRegister] = useState(false); // State cho chế độ đăng ký
     const loading = useSelector((state) => state.auth.loading); // Lấy trạng thái loading từ Redux
-
+    const navigate = useNavigate();
     // Xử lý thay đổi input
     const handleChange = (e) => {
         setFormData({
@@ -64,11 +66,28 @@ const LoginModal = ({ isOpen, onClose }) => {
 
                 localStorage.setItem("isAuthenticated", "true");
                 localStorage.setItem("user", JSON.stringify(response.user));
+                if (response.user.role === true) {
+                    localStorage.setItem("role", "admin");
+                    console.log("Đăng nhập với quyền admin");
 
+                }else{
+                    localStorage.setItem("role", "user");
+                }
                 onClose(); // Đóng modal
+                const role = localStorage.getItem("role");
+                if (role === "admin") {
+                    navigate("/admin");
+                    console.log("Chào mừng Admin!");
+                }else{
+                    navigate("/");
+                }
+
+
             } else {
                 throw new Error("Tên tài khoản hoặc mật khẩu không đúng.");
             }
+
+
         } catch (error) {
             dispatch(loginFailure(error.response ? error.response : error.message));
             setError(error.response ? error.response : "Tài khoản hoặc mật khẩu không đúng.");
@@ -77,17 +96,20 @@ const LoginModal = ({ isOpen, onClose }) => {
 
     // Xử lý đăng ký
     const handleRegister = async (e) => {
-
+        e.preventDefault();
         setSuccess("");
         setError("");
-        e.preventDefault();
+
 
         // Kiểm tra dữ liệu đầu vào trước khi gửi yêu cầu đăng ký
-        if (!formData.username || !formData.password || !formData.email) {
+        if (!formData.username || !formData.password || !formData.email || !formData.rePassword) {
             setError("Vui lòng nhập đầy đủ thông tin.");
             return;
         }
-
+        if(formData.password !== formData.rePassword) {
+            setError("Mật khẩu và xác nhận mật khẩu không khớp.");
+            return;
+        }
 
             dispatch(registerStart()); // Đặt trạng thái đăng ký đang tải
         try {
@@ -165,6 +187,15 @@ const LoginModal = ({ isOpen, onClose }) => {
                             required
                         />
                     </div>
+                    {isRegister && (<div className = "input-group">
+                        <label htmlFor="re-password">Xác Nhận mật khẩu</label>
+                        <input type="password"
+                        id="re-password"
+                        name="rePassword"
+                        value = {formData.rePassword}
+                        onChange={handleChange}
+                        required/>
+                    </div>)}
                     {error && <p className="error">{error}</p>}
                     {success && <p className="success">{success}</p>}
                     <button type="submit" disabled={loading}>
@@ -174,8 +205,8 @@ const LoginModal = ({ isOpen, onClose }) => {
 
                 <p className="toggle-register">
                     {isRegister ? "Đã có tài khoản?" : "Chưa có tài khoản?"}
-                    <span onClick={() => toggleForm()}>
-                        {isRegister ? "Đăng nhập" : "Đăng ký"}
+                    <span onClick={() => toggleForm()}  className="toggle-link">
+                       {isRegister ? <a href="#">Đăng nhập</a> : <a href="#">Đăng ký</a>}
                     </span>
                 </p>
             </div>
