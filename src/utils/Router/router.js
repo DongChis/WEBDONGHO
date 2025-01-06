@@ -8,6 +8,7 @@ export const ROUTERS = {
         DETAIL: "/product/:id",
         CONTACT: "/contact",
         REVIEW: "/review",
-        LOGIN:"/login"
+        LOGIN:"/login",
+        ADMIN:"/admin"
     },
 }
