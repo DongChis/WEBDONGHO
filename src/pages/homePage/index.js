@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { createSelector } from 'reselect';
 
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
@@ -15,15 +16,18 @@ import { Product } from "../../component/Product/Product";
 
 const HomePage = () => {
     const dispatch = useDispatch();
-    const hotProduct = useSelector(loadProductHotSelector);
     const products = useSelector(loadProductsSelector);
     const [recentlyViewed, setRecentlyViewed] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     useEffect(() => {
         // Gọi API để tải danh sách sản phẩm và sản phẩm nổi bật
         const fetchData = async () => {
             try {
                 // Gọi API cho sản phẩm nổi bật
-                const allProductsData = await dispatch(fetchProducts()).unwrap(); // Nhận dữ liệu sản phẩm từ API
+                setLoading(true);
+                await dispatch(fetchProducts()).unwrap();
+                setLoading(false);
             } catch (error) {
                 console.error("Lỗi khi tải dữ liệu sản phẩm:", error);
             }
@@ -88,22 +92,22 @@ const HomePage = () => {
         ]
     };
 
-    const groupProductsByTitle = (data) => {
-        // Ensure 'data' is a valid array before calling 'reduce'
-        if (!Array.isArray(data)) {
-            return {};  // Return an empty object if 'data' is not an array
-        }
-
-        return data.reduce((acc, product) => {
-            if (!product || !product.title) return acc; // Ensure each product has a title
-            const { title } = product;
-            if (!acc[title]) {
-                acc[title] = [];
+        const groupProductsByTitle = (data) => {
+            // Ensure 'data' is a valid array before calling 'reduce'
+            if (!Array.isArray(data)) {
+                return {};  // Return an empty object if 'data' is not an array
             }
-            acc[title].push(product);
-            return acc;
-        }, {});
-    };
+
+            return data.reduce((acc, product) => {
+                if (!product || !product.title) return acc; // Ensure each product has a title
+                const { title } = product;
+                if (!acc[title]) {
+                    acc[title] = [];
+                }
+                acc[title].push(product);
+                return acc;
+            }, {});
+        };
 
 
     const renderProducts = (data, sectionTitle) => {
@@ -170,12 +174,18 @@ const HomePage = () => {
     const productsArray = Array.isArray(products) ? products : Object.values(products);
     const groupedProducts = groupProductsByTitle(productsArray);
     // const groupedProductHot = groupProductsByTitle(hotProduct);
-    console.log("product: "+groupedProducts);
     return (
         <>
-            {products.length >= 0 && renderProducts(groupedProducts, "THƯƠNG HIỆU ĐỒNG HỒ")}
-            {/*{hotProduct.length >= 0 && renderProducts(groupedProductHot, "SẢN PHẨM MỚI RA MẮT")}*/}
-            {renderRecentlyViewed()}
+            {loading ? (
+                <div className="loading">Loading...</div>
+            ) : error ? (
+                <div className="error">{error}</div>
+            ) : (
+                <>
+                    {groupedProducts && Object.keys(groupedProducts).length > 0 && renderProducts(groupedProducts, "THƯƠNG HIỆU ĐỒNG HỒ")}
+                    {renderRecentlyViewed()}
+                </>
+            )}
         </>
     );
 };

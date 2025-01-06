@@ -1,6 +1,7 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "../../api/axoisClient";
+import { createSlice } from "@reduxjs/toolkit";
+import { createSelector } from 'reselect';
 import { fetchProducts } from '../../api/loadProduct';
+
 // **Trạng thái ban đầu**
 const initialState = {
     products: [],
@@ -10,26 +11,22 @@ const initialState = {
     error: null,
 };
 
-
 // **Slice**
 const productSlice = createSlice({
     name: "products",
     initialState,
     reducers: {
-        // Load dữ liệu sản phẩm từ API hoặc tĩnh
         loadProducts: (state, action) => {
-            const products = action.payload || []; // Nếu payload trống, dùng dữ liệu tĩnh
+            const products = action.payload || [];
             const cart = checkCart();
-            state.products = updateProductCartStatus(products, cart); // Cập nhật sản phẩm đã thay đổi trạng thái giỏ hàng
+            state.products = updateProductCartStatus(products, cart);
             state.filteredProducts = state.products;
         },
-        // Load sản phẩm nổi bật
         loadProductHot: (state, action) => {
             const productHot = action.payload;
             const cart = checkCart();
             state.productHot = updateProductCartStatus(productHot, cart);
         },
-        // Tìm kiếm sản phẩm
         searchProducts: (state, action) => {
             const searchTerm = action.payload.toLowerCase().trim();
             if (searchTerm) {
@@ -40,23 +37,22 @@ const productSlice = createSlice({
                 state.filteredProducts = state.products;
             }
         },
-
     },
     extraReducers: (builder) => {
         builder
             .addCase(fetchProducts.pending, (state) => {
-                state.status = "loading"; // Trạng thái khi API đang gọi
+                state.status = "loading";
             })
             .addCase(fetchProducts.fulfilled, (state, action) => {
-                const products = action.payload || []; // Kiểm tra nếu payload trống
+                const products = action.payload || [];
                 const cart = checkCart();
-                state.products = updateProductCartStatus(products, cart); // Cập nhật sản phẩm
-                state.filteredProducts = state.products; // Cập nhật danh sách sản phẩm đã lọc
-                state.status = "succeeded"; // Trạng thái khi API thành công
+                state.products = updateProductCartStatus(products, cart);
+                state.filteredProducts = state.products;
+                state.status = "succeeded";
             })
             .addCase(fetchProducts.rejected, (state, action) => {
-                state.status = "failed"; // Trạng thái khi API thất bại
-                state.error = action.error.message; // Lưu lỗi
+                state.status = "failed";
+                state.error = action.error.message;
             });
     },
 });
@@ -64,14 +60,14 @@ const productSlice = createSlice({
 // **Hàm phụ trợ**
 const updateProductCartStatus = (products, cart) => {
     if (!Array.isArray(products)) {
-        return []; // Nếu không phải mảng, trả về mảng rỗng
+        return [];
     }
     return products.map((product) => {
         const isProductInCart = cart.some((cartItem) => cartItem.id === product.id);
         return {
             ...product,
             isBuying: isProductInCart,
-            color: isProductInCart ? "red" : "blue", // Cập nhật trạng thái giỏ hàng
+            color: isProductInCart ? "red" : "blue",
         };
     });
 };
@@ -94,5 +90,10 @@ export const {
 
 export const productReducer = productSlice.reducer;
 
-export const loadProductsSelector = (state) => state.products.filteredProducts || [];
+// **Memoized Selectors**
+export const loadProductsSelector = createSelector(
+    (state) => state.products.filteredProducts,
+    (filteredProducts) => filteredProducts || []
+);
+
 export const loadProductHotSelector = (state) => state.products.productHot;
