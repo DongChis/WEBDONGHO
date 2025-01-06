@@ -1,0 +1,105 @@
+.container__left{
+  width: 300px;
+  background-color: #343a40;
+  padding: 20px;
+  color: #fff;
+  height: 100vh;
+  position: fixed;
+}
+.container{
+  display: none;
+}
+header{
+  display: none;
+}
+footer{
+  display: none;
+}
+
+.container__left--title{
+  font-weight: bold;
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.list__panel{
+  list-style-type: none;
+  padding: 0;
+  .panel__item{
+    margin: 15px 0;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px;
+    display: block;
+    transition: background-color 0.3s ease;
+  }
+}
+
+.panel__item:hover {
+  background-color: #495057;
+  border-radius: 5px;
+}
+
+.container__right{
+  margin-left: 350px;
+  padding: 20px;
+  flex-grow: 1;
+  .container__right--title{
+    display: flex;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #343a40;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  .container__content{
+    padding: 2rem;
+    .overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      .box {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+    }
+  }
+}
+
+.overview .box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+.charts, .recent-activities, .quick-links {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.product__list--title{
+  display: flex;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #343a40;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
