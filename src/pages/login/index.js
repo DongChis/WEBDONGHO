@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import "./style.scss";
 import {loginFailure, loginStart,loginSuccess,registerStart,registerSuccess,registerFailure} from "../../redux/Slice/authSlice";
 import { loginUserAPI,registerUserAPI } from "../../api/user";
+import { useNavigate } from "react-router-dom"; // Để sử dụng điều hướng
 
 const LoginModal = ({ isOpen, onClose }) => {
     const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     const [success, setSuccess] = useState("");
     const [isRegister, setIsRegister] = useState(false); // State cho chế độ đăng ký
     const loading = useSelector((state) => state.auth.loading); // Lấy trạng thái loading từ Redux
-
+    const navigate = useNavigate();
     // Xử lý thay đổi input
     const handleChange = (e) => {
         setFormData({
@@ -65,11 +66,28 @@ const LoginModal = ({ isOpen, onClose }) => {
 
                 localStorage.setItem("isAuthenticated", "true");
                 localStorage.setItem("user", JSON.stringify(response.user));
+                if (response.user.role === true) {
+                    localStorage.setItem("role", "admin");
+                    console.log("Đăng nhập với quyền admin");
 
+                }else{
+                    localStorage.setItem("role", "user");
+                }
                 onClose(); // Đóng modal
+                const role = localStorage.getItem("role");
+                if (role === "admin") {
+                    navigate("/admin");
+                    console.log("Chào mừng Admin!");
+                }else{
+                    navigate("/");
+                }
+
+
             } else {
                 throw new Error("Tên tài khoản hoặc mật khẩu không đúng.");
             }
+
+
         } catch (error) {
             dispatch(loginFailure(error.response ? error.response : error.message));
             setError(error.response ? error.response : "Tài khoản hoặc mật khẩu không đúng.");

@@ -2,7 +2,9 @@ import React, {memo, useEffect, useState} from "react";
 import Chart from "chart.js/auto";
 import {Bar} from "react-chartjs-2";
 import "./style.scss";
-import axios from "axios";
+import {useDispatch, useSelector} from "react-redux";
+import {loadProductsSelector} from "../../redux/Slice/productSlice";
+import {fetchProducts} from "../../api/loadProduct";
 
 const data = {
     labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6"], // Trục X
@@ -41,28 +43,27 @@ const options = {
 };
 
 const Admin = () => {
-    const [showProductManagement, setShowProductManagement] = useState(false);
-    const [showUserManagement, setShowUserManagement] = useState(false);
     const [currentPanel, setCurrentPanel] = useState(null); // `null` là giao diện mặc định
-    const [products, setProducts] = useState([]); // State để lưu danh sách sản phẩm
-    const [loading, setLoading] = useState(true); // State để quản lý trạng thái loading
 
-    // Lấy dữ liệu sản phẩm từ API
+    const products = useSelector(loadProductsSelector);
+    const dispatch = useDispatch();
+
     useEffect(() => {
-        if (currentPanel === "product") {
-            axios
-                .get(`http://localhost:5048/api/v1/product`) // Gửi yêu cầu GET đến API lấy sản phẩm
-                .then((response) => {
-                    setProducts(response.data); // Lưu dữ liệu sản phẩm vào state
-                    console.log(response.data);
-                    setLoading(false); // Đặt loading thành false sau khi lấy xong dữ liệu
-                })
-                .catch((error) => {
-                    console.error("Có lỗi khi lấy dữ liệu sản phẩm:", error);
-                    setLoading(false); // Đặt loading thành false khi có lỗi
-                });
-        }
-    }, [currentPanel]);
+        // Gọi API để tải danh sách sản phẩm và sản phẩm nổi bật
+        const fetchData = async () => {
+            try {
+                // Gọi API cho sản phẩm nổi bật
+                dispatch(fetchProducts()).unwrap(); // Nhận dữ liệu sản phẩm từ API
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu sản phẩm:", error);
+            }
+        };
+
+        fetchData();
+
+
+    }, [dispatch]);
+
 
     // Toggle the "Quản lý sản phẩm" section
     const handleProductManagementClick = () => {
@@ -143,7 +144,7 @@ const Admin = () => {
                                                 <p>{product.price} VND</p>
                                                 <img src={product.productImageUrl}/>
                                             </li>
-                                            
+
                                         );
                                     })}
                                 </ul>
