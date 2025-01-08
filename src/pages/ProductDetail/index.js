@@ -1,75 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import productAll from "../../data/dataAll";
 import BreadCrumb from "../../pages/theme/breadCrum";
 import "./style.scss"
-import {addCartProducts} from "../../redux/Slice/productSlice";
-import {useDispatch} from "react-redux";
-import {toast} from "react-toastify";
+import {addToCart} from "../../redux/Slice/cartSlice";
+import {useDispatch,useSelector } from "react-redux";
+import { loadProductsSelector} from "../../redux/Slice/productSlice";
+import {fetchProducts} from "../../api/loadProduct";
 
 
-async function getProduct(id) {
-    return productAll.find((product) => product.id == id);
-}
 
-export async function loadProduct({ params }) {
-    const product = await getProduct(params.id);
-    console.log("Sản phẩm : " + product);
-    return product;
-}
+
 
 const ProductDetail = () => {
     const { id } = useParams(); // Assuming your route parameter is named 'id'
-    const [product, setProduct] = useState( null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const products = useSelector((state) => state.products.products);
     const dispatch = useDispatch();
+    const [product, setProduct] = useState(null);
 
     const handleAddToCart = (product) => {
         console.log("Adding to cart:", product);
         if (!product || !product.id) return;
-        //dispatch(addCartProducts(product));
-        toast.success("Sản phẩm đã được thêm vào giỏ hàng!", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+        dispatch(addToCart(product));
+        alert('sản phẩm đã được thêm vào giõ hàng');
     };
-
     useEffect(() => {
-            window.scrollTo(0,0);
-        async function fetchProduct() {
-            try {
-                const productData = await getProduct(id);
-                setProduct(productData);
-                setLoading(false);
-
-            } catch (error) {
-                console.error("Error fetching product:", error);
-                setError(error.message);
-                setLoading(false);
+        const fetchData = async () => {
+            if (products.length === 0) {
+                await dispatch(fetchProducts()).unwrap();
             }
-        }
-        fetchProduct();
-        return () => {
         };
-    }
-    , [id]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+        fetchData();
+    }, [dispatch, products.length]);
+    useEffect(() => {
+        // Tìm sản phẩm theo ID
+        const selectedProduct = products.find((item) => item.id === parseInt(id, 10));
+        setProduct(selectedProduct);
+    }, [id, products]);
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+
+
 
     if (!product) {
-        return <div>Sản phẩm không tồn tại!</div>;
+
+        return <div>Không tìm thấy sản phẩm!</div>;
     }
 
 
@@ -84,7 +58,7 @@ const ProductDetail = () => {
                             <div>
                                 <h1 className="product-detail-name">{product.title}</h1>
                                 <p className="product-detail-description">{product.description}</p>
-                                <p className="product-detail-price">{product.price.toLocaleString()} VND</p>
+                                <p className="product-detail-price">{product.price.toLocaleString("vi-VN")} VND</p>
                             </div>
                             <div className="button-group">
                                 <button onClick={() => handleAddToCart(product)} className="btn-add-to-cart">Thêm vào
