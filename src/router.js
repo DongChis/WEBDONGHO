@@ -6,7 +6,7 @@ import Profile from "./pages/Profile";
 import ProductPage from "./pages/productPage";
 import ShoppingCart from "./pages/shoppingCart";
 import Checkout from "./pages/CheckOut";
-import ProductDetail, {loadProduct} from "./pages/ProductDetail";
+import ProductDetail from "./pages/ProductDetail";
 import ContactPage from "./pages/contactPage";
 import ReviewPage from "./pages/reviewPage";
 import Login from "./pages/login";
@@ -40,7 +40,6 @@ function RenderRouter() {
         {
             path: ROUTERS.pages.DETAIL,
             component: <ProductDetail />,
-            loader: loadProduct,
             layout: MasterLayout,
         },
         {

@@ -32,7 +32,18 @@ export const registerUserAPI = (userData) => {
             throw error;  // Ném lỗi để tiếp tục xử lý ở phần khác
         });
 };
-
+export const forgotPasswordAPI = (data) => {
+    return axiosClient
+        .post(`${END_POINT.USER}/forgot-password`, data)
+        .then(response => {
+            console.log("Forgot Password API Response:", response);
+            return response;
+        })
+        .catch(error => {
+            console.error("Forgot Password API Error:", error);
+            throw error;  // Ném lỗi để xử lý tiếp
+        });
+};
 
 
 

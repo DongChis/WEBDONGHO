@@ -16,6 +16,7 @@
         const location = useLocation();
         const navigate = useNavigate();
         const dispatch = useDispatch();
+        const cartItems = useSelector(state => state.cart.cart);
 
         // Get authentication state from Redux store
         const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
@@ -28,13 +29,7 @@
         const [isShowCategory, setShowCategory] = useState(false);
         const [activeIndex, setActiveIndex] = useState(0);
 
-        // Giỏ hàng lấy từ localStorage
-        const getCartItems = () => {
-            const cart = localStorage.getItem('cart');
-            return cart ? JSON.parse(cart) : [];
-        };
 
-        const cartItems = getCartItems(); // Lấy giỏ hàng từ localStorage
 
         const [menus, setMenus] = useState([
             { name: "Trang chủ", path: ROUTERS.pages.home },
@@ -158,7 +153,7 @@
                                     <li>
                                         <Link to={ROUTERS.pages.CART}>
                                             <AiOutlineShoppingCart />
-                                            <span>{cartItems.length || 0}</span>
+                                            <span>{cartItems.length }</span>
                                         </Link>
                                     </li>
                                 </ul>

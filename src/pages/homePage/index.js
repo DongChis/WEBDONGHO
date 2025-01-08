@@ -3,15 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { createSelector } from 'reselect';
-
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import "./style.scss";
 import "./tag.scss";
 import "pages/Profile/style.scss";
 import { fetchProducts } from '../../api/loadProduct';
-import { loadProductHotSelector, loadProductsSelector } from '../../redux/Slice/productSlice';
+import { loadProductsSelector } from '../../redux/Slice/productSlice';
 import { Product } from "../../component/Product/Product";
 
 const HomePage = () => {
@@ -20,16 +18,17 @@ const HomePage = () => {
     const [recentlyViewed, setRecentlyViewed] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
     useEffect(() => {
-        // Gọi API để tải danh sách sản phẩm và sản phẩm nổi bật
         const fetchData = async () => {
             try {
-                // Gọi API cho sản phẩm nổi bật
                 setLoading(true);
                 await dispatch(fetchProducts()).unwrap();
+            } catch (err) {
+                console.error("Lỗi khi tải dữ liệu sản phẩm:", err);
+                setError("Không thể tải sản phẩm. Vui lòng thử lại sau.");
+            } finally {
                 setLoading(false);
-            } catch (error) {
-                console.error("Lỗi khi tải dữ liệu sản phẩm:", error);
             }
         };
 
@@ -43,7 +42,6 @@ const HomePage = () => {
     }, [dispatch]);
 
     const handleProductView = useCallback((product) => {
-
         setRecentlyViewed(prev => {
             const existingProduct = prev.find(item => item.id === product.id);
             let newViewed;
@@ -53,14 +51,10 @@ const HomePage = () => {
                 newViewed = [product, ...prev];
             }
             const viewed = newViewed.slice(0, 3);
-
             localStorage.setItem('recentlyViewed', JSON.stringify(viewed));
             return viewed;
         });
     }, []);
-
-
-
 
     const sliderSettings = {
         dots: true,
@@ -92,44 +86,38 @@ const HomePage = () => {
         ]
     };
 
-        const groupProductsByTitle = (data) => {
-            // Ensure 'data' is a valid array before calling 'reduce'
-            if (!Array.isArray(data)) {
-                return {};  // Return an empty object if 'data' is not an array
+    const groupProductsByTitle = (data) => {
+        if (!Array.isArray(data)) {
+            return {};
+        }
+
+        return data.reduce((acc, product) => {
+            if (!product || !product.title) return acc;
+            const { title } = product;
+            if (!acc[title]) {
+                acc[title] = [];
             }
-
-            return data.reduce((acc, product) => {
-                if (!product || !product.title) return acc; // Ensure each product has a title
-                const { title } = product;
-                if (!acc[title]) {
-                    acc[title] = [];
-                }
-                acc[title].push(product);
-                return acc;
-            }, {});
-        };
-
+            acc[title].push(product);
+            return acc;
+        }, {});
+    };
 
     const renderProducts = (data, sectionTitle) => {
-        if (!data || !Object.keys(data).length) return null;
+        if (!data || !Object.keys(data).length) {
+            return <p className="no-products">Không có sản phẩm để hiển thị.</p>;
+        }
 
         const tabList = [];
         const tabPanels = [];
 
-        Object.keys(data).forEach((title, index) => {
-            tabList.push(<Tab key={index}>{title}</Tab>);
+        Object.keys(data).forEach((title) => {
+            tabList.push(<Tab key={title}>{title}</Tab>);
             const products = data[title].map((product, idx) => (
-                <Product
-                    key={product.id}
-                    data={product}
-                    onView={handleProductView}
-                />
+                <Product key={product.id || `${title}-${idx}`} data={product} onView={handleProductView} />
             ));
             tabPanels.push(
-                <TabPanel key={index}>
-
+                <TabPanel key={title}>
                     {data[title].length > 3 ? (
-
                         <Slider {...sliderSettings}>
                             {products}
                         </Slider>
@@ -145,35 +133,36 @@ const HomePage = () => {
                 <div className="section-title">
                     <h2>{sectionTitle}</h2>
                     <Tabs>
-                        <TabList>
-                            {tabList}
-                        </TabList>
+                        <TabList>{tabList}</TabList>
                         {tabPanels}
                     </Tabs>
                 </div>
             </div>
         );
     };
+
     const renderRecentlyViewed = () => {
-        if (recentlyViewed.length === 0) return null;
+        if (recentlyViewed.length === 0) {
+            return null;
+        }
+
         const products = recentlyViewed.map((product, idx) => (
-            <Product key={product.id} data={product} />
+            <Product key={product.id || `recent-${idx}`} data={product} />
         ));
 
         return (
             <div className="container">
                 <div className="section-title">
                     <h2>SẢN PHẨM GẦN ĐÂY ĐÃ XEM</h2>
-                    <div className="row">
-                        {products}
-                    </div>
+                    <div className="row">{products}</div>
                 </div>
             </div>
         );
     };
+
     const productsArray = Array.isArray(products) ? products : Object.values(products);
     const groupedProducts = groupProductsByTitle(productsArray);
-    // const groupedProductHot = groupProductsByTitle(hotProduct);
+
     return (
         <>
             {loading ? (
@@ -182,7 +171,7 @@ const HomePage = () => {
                 <div className="error">{error}</div>
             ) : (
                 <>
-                    {groupedProducts && Object.keys(groupedProducts).length > 0 && renderProducts(groupedProducts, "THƯƠNG HIỆU ĐỒNG HỒ")}
+                    {groupedProducts && renderProducts(groupedProducts, "THƯƠNG HIỆU ĐỒNG HỒ")}
                     {renderRecentlyViewed()}
                 </>
             )}
@@ -191,7 +180,3 @@ const HomePage = () => {
 };
 
 export default memo(HomePage);
-
-
-
-
