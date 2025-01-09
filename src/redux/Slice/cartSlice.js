@@ -32,17 +32,16 @@ const cartSlice = createSlice({
         addToCart: (state, action) => {
             const newItem = action.payload;
 
-            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
             const existingItem = state.cart.find(item => item.id === newItem.id);
 
             if (existingItem) {
-                // Nếu có rồi, tăng số lượng và tạo mới đối tượng (giữ nguyên tính bất biến của Redux state)
+                // Cập nhật số lượng sản phẩm
                 state.cart = state.cart.map(item =>
                     item.id === newItem.id ? { ...item, quantity: item.quantity + 1 } : item
                 );
             } else {
-                // Nếu chưa có, thêm mới sản phẩm vào giỏ hàng
-                state.cart.push({ ...newItem, quantity: 1 });
+                // Tạo mới mảng giỏ hàng (không dùng push)
+                state.cart = [...state.cart, { ...newItem, quantity: 1 }];
             }
 
             // Lưu giỏ hàng vào localStorage

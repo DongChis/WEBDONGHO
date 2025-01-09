@@ -19,7 +19,6 @@ const productHotData = [
         url: '#',
         gender: 'Nữ',
         price: '26.840.000',
-
         productImageUrl: 'https://image.donghohaitrieu.com/wp-content/uploads/2023/09/RE-AV0B03B00B.jpg'
     },{
         id: 24,
