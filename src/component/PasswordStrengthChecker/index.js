@@ -40,7 +40,9 @@ const PasswordStrengthChecker = ({ password }) => {
     return (
         <div className="password-strength">
             <div className={`strength-bar ${className}`} />
-            <p className={`strength-label ${className}`}>{label}</p>
+
+            <p className={`strength-label ${className}`}><span className="strength-text">Độ mạnh mật khẩu:</span>
+                {label}</p>
         </div>
     );
 };
