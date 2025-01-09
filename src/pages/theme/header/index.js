@@ -161,69 +161,37 @@
                         </div>
                     </div>
                 </div>
-                <div className="container">
-                    <div className="row heros__categories_container">
-                        <div className="col-lg-3 heros__categories">
-                            <div className="heros__categories_all" onClick={() => setShowCategory(!isShowCategory)}>
-                                <AiOutlineMenu />
-                                Danh sách sản phẩm
-                            </div>
-                            <ul className={isShowCategory ? "" : "hidden"}>
-                                {categories.map((category, key) => (
-                                    <li key={key}>
-                                        <Link to={ROUTERS.pages.PRODUCTS}>{category}</Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="col-lg-9 heros__search_container">
-                            <div className="hero_search">
-                                <div className="hero__search_form">
-                                    <form onSubmit={handleSearch}>
-                                        <input
-                                            type="text"
-                                            placeholder="Bạn đang cần gì?"
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                        />
-                                        <button type="submit">Tìm kiếm</button>
-                                    </form>
-                                </div>
-                                <div className="hero__search_phone">
-                                    <div className="hero__search_phone_icon"><AiOutlinePhone /></div>
-                                    <div className="hero__search_phone_text">
-                                        <p>0123.456.789</p>
-                                        <span>Hỗ trợ 24/7</span>
-                                    </div>
-                                </div>
-                            </div>
-                            {isHome && (
-                                <div className="hero__search_slider">
-                                    <div className="slides">
-                                        {slides.map((slide, index) => (
-                                            <div
-                                                key={index}
-                                                className={`slide ${index === activeIndex ? 'active' : ''}`}
-                                            >
-                                                <img src={slide} alt={`Slide ${index}`} />
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <button className="prev" onClick={prevSlide}>&lt;</button>
-                                    <button className="next" onClick={nextSlide}>&gt;</button>
-                                </div>
-                            )}
-                        </div>
+              </div>
+            </div>
+            {isHome && (
+              <div className="hero__search_slider">
+                <div className="slides">
+                  {slides.map((slide, index) => (
+                    <div
+                      key={index}
+                      className={`slide ${
+                        index === activeIndex ? "active" : ""
+                      }`}
+                    >
+                      <img src={slide} alt={`Slide ${index}`} />
                     </div>
+                  ))}
                 </div>
+                <button className="prev" onClick={prevSlide}>
+                  &lt;
+                </button>
+                <button className="next" onClick={nextSlide}>
+                  &gt;
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
-                <LoginModal
-                    isOpen={isModalOpen}
-                    onClose={() => setModalOpen(false)}
+      <LoginModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
+    </>
+  );
+};
 
-                />
-            </>
-        );
-    };
-
-    export default memo(Header);
+export default memo(Header);

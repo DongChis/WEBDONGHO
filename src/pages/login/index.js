@@ -340,8 +340,34 @@ const LoginModal = ({ isOpen, onClose }) => {
                     </>
                 )}
             </div>
-        </div>
-    );
+          )}
+          <div className="input-group">
+            <label htmlFor="password">Mật khẩu</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          {error && <p className="error">{error}</p>}
+          {success && <p className="success">{success}</p>}
+          <button type="submit" disabled={loading}>
+            {loading ? "Đang xử lý..." : isRegister ? "Đăng ký" : "Đăng nhập"}
+          </button>
+        </form>
+
+        <p className="toggle-register">
+          {isRegister ? "Đã có tài khoản?" : "Chưa có tài khoản?"}
+          <span onClick={() => toggleForm()}>
+            {isRegister ? "Đăng nhập" : "Đăng ký"}
+          </span>
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default LoginModal;
