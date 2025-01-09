@@ -84,24 +84,29 @@ const Checkout = () => {
       alert("Email không hợp lệ. Vui lòng nhập lại.");
       return;
     }
-
-    for (const item of cartItems) {
-      var order = {
-        customerID: customerID, // You might want to replace this with actual customer ID if available
-        productID: item.id,
-        quantity: Math.floor(Math.random() * 5) + 1, // Random quantity between 1 and 5
-        unitPrice: parsePrice(item.price),
-        totalAmount: parsePrice(item.price) * item.quantity,
-        status: "Pending",
-        deliveryMethod: deliveryMethod,
-        paymentMethod: paymentMethod === "online" ? onlinePaymentMethod : "cod",
-      };
-    }
+    const orderItems = cartItems.map((item) => ({
+      productID: item.id,
+      quantity: item.quantity,
+      unitPrice: parsePrice(item.price),
+    }));
+    const totalAmount = orderItems.reduce(
+      (total, item) => total + item.unitPrice * item.quantity,
+      0
+    );
+    const orderDetails = {
+      customerID: customerID, // Ensure this is set correctly
+      totalAmount: totalAmount, // Ensure this is set correctly
+      deliveryMethod: deliveryMethod,
+      paymentMethod: paymentMethod === "online" ? onlinePaymentMethod : "cod",
+      address: address,
+      status: "Pending",
+      orderItems: orderItems,
+    };
     try {
       dispatch(checkoutStart());
-      console.log(order);
+      console.log(orderDetails);
 
-      const response = await createOrderAPI(order);
+      const response = await createOrderAPI(orderDetails);
       if (response) {
         console.log("Order created successfully:", response);
 
