@@ -1,194 +1,197 @@
-  .login-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+// Toàn bộ modal overlay
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 
-    .login-modal {
-      .toggle-register{
-        font-size: 14px;
-        color: #666;
-        text-align: center;
-        margin-top: 10px;
+  .login-modal {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+
+    h2 {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.5rem;
+      color: #333;
+      text-align: center;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: 2px solid transparent;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #1c1c1c;
+      border-radius: 8px;
+      padding: 5px;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+
+      &:hover {
+        background-color: red;
+        border-color: red;
+        color: white;
       }
-      .toggle-link a {
+    }
+
+    .input-group {
+      margin-bottom: 1rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 14px;
+        color: #1c1c1c;
+        font-weight: bold;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      background: #6200ea;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background: #4b00b3;
+      }
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .success {
+      color: green;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .forgot-password {
+      text-align: center;
+      margin-top: 15px;
+
+      .forgot-link {
         color: #007bff;
         text-decoration: none;
         cursor: pointer;
-      }
-
-      .toggle-link a:hover {
-        text-decoration: underline;
-      }
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      position: relative;
-
-      h2 {
-        margin: 0 0 1.5rem 0;
-        font-size: 1.5rem;
-        color: #333;
-        text-align: center;
-      }
-
-      .toggle-container {
-        display: flex;
-        position: relative;
-        justify-content: center;
-        margin-bottom: 1rem;
-        background: #f0f0f0;
-        border-radius: 25px;
-        padding: 5px;
-        margin-top: 30px;
-
-        .toggle-button {
-          flex: 1;
-          padding: 10px;
-          border: none;
-          background: none;
-          cursor: pointer;
-          border-radius: 25px;
-          z-index: 1;
-          text-align: center;
-          transition: color 0.3s ease;
-
-          &:hover {
-            color: #6200ea;
-          }
-
-          &.active {
-            color: white;
-          }
-        }
-
-        .toggle-slider {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          width: 50%;
-          background: #6200ea;
-          border-radius: 25px;
-          transition: all 0.3s ease;
-
-          &.right {
-            left: 50%;
-          }
-        }
-      }
-      .close-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: none;
-        border: 2px solid transparent;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: #1c1c1c;
-        border-radius: 8px;
-        padding: 5px;
-        transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 
         &:hover {
-          background-color: red;
-          border-color: red;
-          color: white;
+          text-decoration: underline;
         }
       }
+    }
 
-      .input-group {
-        margin-bottom: 1rem;
+    .toggle-register {
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+      margin-top: 10px;
 
-        label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-size: 14px;
-          color: #1c1c1c;
-          font-weight: bold;
-        }
-
-        input {
-          width: 100%;
-          padding: 0.5rem;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-      }
-
-      .social-login {
-        text-align: center;
-        margin-top: 1rem;
-
-        p {
-          margin-bottom: 1rem;
-        }
-
-        button {
-          width: 100%;
-          padding: 0.75rem;
-          border: none;
-          margin-bottom: 0.5rem;
-          border-radius: 4px;
-          cursor: pointer;
-
-          &.google {
-            background: #db4437;
-            color: white;
-          }
-
-          &.facebook {
-            background: #3b5998;
-            color: white;
-          }
-        }
-      }
-
-      button[type="submit"] {
-        width: 100%;
-        padding: 0.75rem;
-        border: none;
-        background: #6200ea;
-        color: white;
-        border-radius: 4px;
+      .toggle-link {
+        color: #007bff;
+        text-decoration: none;
         cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .password-strength {
+      margin-top: 5px;
+
+      .strength-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #eee;
+        border-radius: 4px;
+        margin-bottom: 5px;
+
+        &.strength-weak {
+          background-color: #ff4d4d;
+          width: 20%;
+        }
+
+        &.strength-medium {
+          background-color: #ff884d;
+          width: 50%;
+        }
+
+        &.strength-strong {
+          background-color: #ffd24d;
+          width: 80%;
+        }
+
+        &.strength-very-strong {
+          background-color: #4dff88;
+          width: 100%;
+        }
       }
 
+      .strength-label {
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+        font-size: 14px;
 
+        &.strength-weak {
+          color: #ff4d4d;
+        }
+
+        &.strength-medium {
+          color: #ff884d;
+        }
+
+        &.strength-strong {
+          color: #ffd24d;
+        }
+
+        &.strength-very-strong {
+          color: #4dff88;
+        }
+      }
     }
-
   }
+}
 
-  .logout-button {
-    padding: 10px 20px;
-    border: none;
-    background-color: #db4437;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
+// Logout button
+.logout-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #db4437;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
 
-    &:hover {
-      background-color: #a33527;
-    }
+  &:hover {
+    background-color: #a33527;
   }
-
-
-
-
-
-
-
-
-
-
-
-
+}

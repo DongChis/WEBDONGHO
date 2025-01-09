@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "./style.scss";
 import {
     loginFailure,
@@ -7,30 +7,37 @@ import {
     loginSuccess,
     registerStart,
     registerSuccess,
-    registerFailure
+    registerFailure,
 } from "../../redux/Slice/authSlice";
-import { loginUserAPI, registerUserAPI } from "../../api/user";
-import { useNavigate } from "react-router-dom"; // Để sử dụng điều hướng
+import {
+    loginUserAPI,
+    registerUserAPI,
+    forgotPasswordAPI,
+    resetPasswordAPI,
+} from "../../api/user";
+import { useNavigate } from "react-router-dom";
+import PasswordStrengthChecker from "../../component/PasswordStrengthChecker";
 
 const LoginModal = ({ isOpen, onClose }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // State quản lý dữ liệu form
     const [formData, setFormData] = useState({
         username: "",
         password: "",
-        email: "", // Dùng cho đăng ký và quên mật khẩu
-        rePassword: "", // Trường xác nhận mật khẩu
+        email: "",
+        rePassword: "",
+        token: "", // Token để reset mật khẩu
+        newPassword: "", // Mật khẩu mới
     });
 
-    const [error, setError] = useState(""); // State để lưu thông báo lỗi
-    const [success, setSuccess] = useState(""); // State để lưu thông báo thành công
-    const [isRegister, setIsRegister] = useState(false); // State cho chế độ đăng ký
-    const [isForgotPassword, setIsForgotPassword] = useState(false); // State cho chế độ quên mật khẩu
-    const loading = useSelector((state) => state.auth.loading); // Lấy trạng thái loading từ Redux
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [isRegister, setIsRegister] = useState(false);
+    const [isForgotPassword, setIsForgotPassword] = useState(false);
+    const [isResetPassword, setIsResetPassword] = useState(false);
+    const loading = useSelector((state) => state.auth.loading);
 
-    // Xử lý thay đổi input
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -38,20 +45,6 @@ const LoginModal = ({ isOpen, onClose }) => {
         });
     };
 
-    // API quên mật khẩu
-    const forgotPasswordAPI = async (data) => {
-        const response = await fetch("/api/auth/forgot-password", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-            throw new Error("Failed to send reset password email.");
-        }
-        return response.json();
-    };
-
-    // Xử lý quên mật khẩu
     const handleSendResetPassword = async (e) => {
         e.preventDefault();
         setSuccess("");
@@ -64,9 +57,9 @@ const LoginModal = ({ isOpen, onClose }) => {
 
         try {
             const response = await forgotPasswordAPI({ email: formData.email });
-
-            if (response && response.message === "Email khôi phục mật khẩu đã được gửi!") {
+            if (response && response.message === "Email khôi phục mật khẩu đã được gửi.") {
                 setSuccess("Email khôi phục mật khẩu đã được gửi! Vui lòng kiểm tra hộp thư của bạn.");
+                setIsResetPassword(true); // Chuyển sang giao diện nhập token và mật khẩu mới
             } else {
                 throw new Error("Không thể gửi email khôi phục mật khẩu.");
             }
@@ -75,62 +68,35 @@ const LoginModal = ({ isOpen, onClose }) => {
         }
     };
 
-    // Chuyển đổi giữa các chế độ (Đăng ký, Đăng nhập, Quên mật khẩu)
-    const toggleForm = () => {
-        setIsRegister(!isRegister);
-        setSuccess("");
-        setError("");
-    };
-
-    const toggleForgotPassword = () => {
-        setIsForgotPassword(!isForgotPassword);
-        setSuccess("");
-        setError("");
-    };
-
-    // Xử lý đăng nhập
-    const handleLogin = async (e) => {
+    const handleResetPassword = async (e) => {
         e.preventDefault();
         setSuccess("");
         setError("");
 
-        if (!formData.username || !formData.password) {
-            setError("Vui lòng nhập đầy đủ tên tài khoản và mật khẩu.");
+        if (!formData.token || !formData.newPassword || !formData.email) {
+            setError("Vui lòng nhập đầy đủ thông tin.");
             return;
         }
 
         try {
-            dispatch(loginStart());
-            const response = await loginUserAPI({
-                userName: formData.username,
-                password: formData.password,
+            const response = await resetPasswordAPI({
+                email: formData.email,
+                token: formData.token,
+                newPassword: formData.newPassword,
             });
 
-            if (response.user) {
-                setSuccess("Đăng nhập thành công");
-                dispatch(loginSuccess(response));
-                localStorage.setItem("isAuthenticated", "true");
-                localStorage.setItem("user", JSON.stringify(response.user));
-
-                if (response.user.role) {
-                    localStorage.setItem("role", "admin");
-                    navigate("/admin");
-                } else {
-                    localStorage.setItem("role", "user");
-                    navigate("/");
-                }
-
-                onClose(); // Đóng modal
+            if (response && response.message === "Mật khẩu đã được đặt lại thành công.") {
+                setSuccess("Mật khẩu đã được đặt lại thành công! Bạn có thể đăng nhập.");
+                setIsResetPassword(false); // Quay lại giao diện đăng nhập
+                setIsForgotPassword(false);
             } else {
-                throw new Error("Tên tài khoản hoặc mật khẩu không đúng.");
+                throw new Error("Token không hợp lệ hoặc đã hết hạn.");
             }
         } catch (error) {
-            dispatch(loginFailure(error.message || "Đăng nhập thất bại."));
-            setError(error.message || "Tên tài khoản hoặc mật khẩu không đúng.");
+            setError(error.message || "Không thể đặt lại mật khẩu.");
         }
     };
 
-    // Xử lý đăng ký
     const handleRegister = async (e) => {
         e.preventDefault();
         setSuccess("");
@@ -152,7 +118,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                 userName: formData.username,
                 password: formData.password,
                 email: formData.email,
-                role: false, // Mặc định vai trò user
+                role: false, // Mặc định là người dùng
             });
 
             if (response && response.message === "Đăng ký thành công!") {
@@ -170,38 +136,136 @@ const LoginModal = ({ isOpen, onClose }) => {
         }
     };
 
-    // Nếu modal không mở thì không hiển thị
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setSuccess("");
+        setError("");
+
+        if (!formData.username || !formData.password) {
+            setError("Vui lòng nhập đầy đủ tên tài khoản và mật khẩu.");
+            return;
+        }
+
+        try {
+            dispatch(loginStart());
+            const response = await loginUserAPI({
+                userName: formData.username,
+                password: formData.password,
+            });
+
+            if (response.user) {
+                dispatch(loginSuccess(response));
+                localStorage.setItem("isAuthenticated", "true");
+                localStorage.setItem("user", JSON.stringify(response.user));
+
+                if (response.user.role) {
+                    localStorage.setItem("role", "admin");
+                    navigate("/admin");
+                } else {
+                    localStorage.setItem("role", "user");
+                    navigate("/");
+                }
+
+                onClose();
+            } else {
+                throw new Error("Tên tài khoản hoặc mật khẩu không đúng.");
+            }
+        } catch (error) {
+            dispatch(loginFailure(error.message || "Đăng nhập thất bại."));
+            setError(error.message || "Tên tài khoản hoặc mật khẩu không đúng.");
+        }
+    };
+
+    const toggleForm = () => {
+        setIsRegister(!isRegister);
+        setSuccess("");
+        setError("");
+    };
+
+    const toggleForgotPassword = () => {
+        setIsForgotPassword(!isForgotPassword);
+        setSuccess("");
+        setError("");
+    };
+
     if (!isOpen) return null;
 
     return (
         <div className="login-modal-overlay">
             <div className="login-modal">
-                <button className="close-button" onClick={onClose}>×</button>
+                <button className="close-button" onClick={onClose}>
+                    ×
+                </button>
                 {isForgotPassword ? (
-                    <>
-                        <h2>Quên mật khẩu</h2>
-                        <form onSubmit={handleSendResetPassword}>
-                            <div className="input-group">
-                                <label htmlFor="email">Email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            {error && <p className="error">{error}</p>}
-                            {success && <p className="success">{success}</p>}
-                            <button type="submit" disabled={loading}>
-                                {loading ? "Đang gửi..." : "Gửi email khôi phục mật khẩu"}
-                            </button>
-                        </form>
-                        <p className="toggle-register">
-                            <span onClick={toggleForgotPassword} className="toggle-link">Quay lại đăng nhập</span>
-                        </p>
-                    </>
+                    isResetPassword ? (
+                        <>
+                            <h2>Đặt lại mật khẩu</h2>
+                            <form onSubmit={handleResetPassword}>
+                                <div className="input-group">
+                                    <label htmlFor="email">Email</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="input-group">
+                                    <label htmlFor="token">Token</label>
+                                    <input
+                                        type="text"
+                                        id="token"
+                                        name="token"
+                                        value={formData.token}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="input-group">
+                                    <label htmlFor="newPassword">Mật khẩu mới</label>
+                                    <input
+                                        type="password"
+                                        id="newPassword"
+                                        name="newPassword"
+                                        value={formData.newPassword}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                {error && <p className="error">{error}</p>}
+                                {success && <p className="success">{success}</p>}
+                                <button type="submit" disabled={loading}>
+                                    {loading ? "Đang đặt lại..." : "Đặt lại mật khẩu"}
+                                </button>
+                            </form>
+                        </>
+                    ) : (
+                        <>
+                            <h2>Quên mật khẩu</h2>
+                            <form onSubmit={handleSendResetPassword}>
+                                <div className="input-group">
+                                    <label htmlFor="email">Email</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                {error && <p className="error">{error}</p>}
+                                {success && <p className="success">{success}</p>}
+                                <button type="submit" disabled={loading}>
+                                    {loading ? "Đang gửi..." : "Gửi email khôi phục mật khẩu"}
+                                </button>
+                            </form>
+                        </>
+                    )
                 ) : (
                     <>
                         <h2>{isRegister ? "Đăng ký" : "Đăng nhập"}</h2>
@@ -240,13 +304,15 @@ const LoginModal = ({ isOpen, onClose }) => {
                                     onChange={handleChange}
                                     required
                                 />
+                                {/* Truyền giá trị mật khẩu vào PasswordStrengthChecker */}
+                                <PasswordStrengthChecker password={formData.password} />
                             </div>
                             {isRegister && (
                                 <div className="input-group">
-                                    <label htmlFor="re-password">Xác nhận mật khẩu</label>
+                                    <label htmlFor="rePassword">Xác nhận mật khẩu</label>
                                     <input
                                         type="password"
-                                        id="re-password"
+                                        id="rePassword"
                                         name="rePassword"
                                         value={formData.rePassword}
                                         onChange={handleChange}
@@ -261,13 +327,15 @@ const LoginModal = ({ isOpen, onClose }) => {
                             </button>
                         </form>
                         <p className="forgot-password">
-                            <span onClick={toggleForgotPassword} className="forgot-link">Quên mật khẩu?</span>
+              <span onClick={toggleForgotPassword} className="forgot-link">
+                Quên mật khẩu?
+              </span>
                         </p>
                         <p className="toggle-register">
                             {isRegister ? "Đã có tài khoản?" : "Chưa có tài khoản?"}
                             <span onClick={toggleForm} className="toggle-link">
-                                {isRegister ? "Đăng nhập" : "Đăng ký"}
-                            </span>
+                {isRegister ? "Đăng nhập" : "Đăng ký"}
+              </span>
                         </p>
                     </>
                 )}
