@@ -35,7 +35,7 @@ const ProductList = () => {
 
         // Lọc theo khoang giá
         filtered = filtered.filter(product => {
-            const price = parseFloat(product.price.replace(/\./g, ''));
+            const price =product.price;
             return price >= priceRange[0] && price <= priceRange[1];
         });
 
@@ -79,8 +79,8 @@ const ProductList = () => {
 
         // Tạo bản sao của mảng đã lọc trước khi sắp xếp
         filtered = [...filtered].sort((a, b) => {
-            const priceA = parseFloat(a.price.replace(/\./g, ''));
-            const priceB = parseFloat(b.price.replace(/\./g, ''));
+            const priceA =a.price;
+            const priceB = b.price;
             return sort === 'asc' ? priceA - priceB : priceB - priceA;
         });
 
