@@ -41,10 +41,21 @@ export const forgotPasswordAPI = (data) => {
         })
         .catch(error => {
             console.error("Forgot Password API Error:", error);
-            throw error;  // Ném lỗi để xử lý tiếp
+            throw error;
         });
 };
-
+export const resetPasswordAPI = async (data) => {
+    return axiosClient
+        .post(`${END_POINT.USER}/reset-password`, data)
+        .then((response) => {
+            console.log("Reset Password API Response:", response);
+            return response;
+        })
+        .catch((error) => {
+            console.error("Reset Password API Error:", error);
+            throw error; // Ném lỗi để xử lý tiếp
+        });
+};
 
 
 
