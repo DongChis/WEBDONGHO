@@ -304,8 +304,8 @@ const LoginModal = ({ isOpen, onClose }) => {
                                     onChange={handleChange}
                                     required
                                 />
-                                {/* Truyền giá trị mật khẩu vào PasswordStrengthChecker */}
-                                <PasswordStrengthChecker password={formData.password} />
+
+                                {isRegister && <PasswordStrengthChecker password={formData.password} />}
                             </div>
                             {isRegister && (
                                 <div className="input-group">
@@ -340,34 +340,8 @@ const LoginModal = ({ isOpen, onClose }) => {
                     </>
                 )}
             </div>
-          )}
-          <div className="input-group">
-            <label htmlFor="password">Mật khẩu</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          {error && <p className="error">{error}</p>}
-          {success && <p className="success">{success}</p>}
-          <button type="submit" disabled={loading}>
-            {loading ? "Đang xử lý..." : isRegister ? "Đăng ký" : "Đăng nhập"}
-          </button>
-        </form>
-
-        <p className="toggle-register">
-          {isRegister ? "Đã có tài khoản?" : "Chưa có tài khoản?"}
-          <span onClick={() => toggleForm()}>
-            {isRegister ? "Đăng nhập" : "Đăng ký"}
-          </span>
-        </p>
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default LoginModal;
