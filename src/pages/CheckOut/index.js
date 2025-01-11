@@ -11,7 +11,6 @@ import { clearCart } from "../../redux/Slice/cartSlice";
 import { checkoutStart, checkoutFailure } from "../../redux/Slice/authSlice";
 import { createOrderAPI } from "../../api/order";
 
-
 const Checkout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,13 +32,17 @@ const Checkout = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
 
-  const parsePrice = (priceString) => {
-    return parseFloat(priceString.replace(/\./g, "")); // Chuyển giá thành kiểu số
-  };
+  // function parsePrice(priceString) {
+  //   if (typeof priceString !== "string") {
+  //     console.error("Invalid priceString:", priceString);
+  //     return 0;
+  //   }
+  //   return parseFloat(priceString.replace(/[^0-9.-]+/g, ""));
+  // }
 
   const calculateTotalPrice = () => {
     return cartItems.reduce(
-      (total, item) => total + parsePrice(item.price) * item.quantity,
+      (total, item) => total + item.price * item.quantity,
       0
     );
   };
@@ -89,7 +92,7 @@ const Checkout = () => {
     const orderItems = cartItems.map((item) => ({
       productID: item.id,
       quantity: item.quantity,
-      unitPrice: parsePrice(item.price),
+      unitPrice: item.price,
     }));
     const totalAmount = orderItems.reduce(
       (total, item) => total + item.unitPrice * item.quantity,
@@ -151,9 +154,7 @@ const Checkout = () => {
                 <img src={item.productImageUrl} alt={item.title} />
                 <div className="item-details">
                   <p>{item.name}</p>
-                  <p>
-                    Giá: {parsePrice(item.price).toLocaleString("de-DE")} VND
-                  </p>
+                  <p>Giá: {item.price.toLocaleString("de-DE")} VND</p>
                   <p>Số lượng: {item.quantity}</p>
                 </div>
               </div>
