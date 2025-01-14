@@ -1,3 +1,4 @@
+
 import React, {memo, useEffect, useState} from "react";
 import Chart from "chart.js/auto";
 import {Bar} from "react-chartjs-2";

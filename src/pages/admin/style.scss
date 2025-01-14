@@ -1,3 +1,4 @@
+
 .container__left{
   width: 300px;
   background-color: #343a40;
@@ -6,15 +7,15 @@
   height: 100vh;
   position: fixed;
 }
-.container{
-  display: none;
-}
-header{
-  display: none;
-}
-footer{
-  display: none;
-}
+// .container{
+//   display: none;
+// }
+// header{
+//   display: none;
+// }
+// footer{
+//   display: none;
+// }
 
 .container__left--title{
   font-weight: bold;
@@ -386,6 +387,7 @@ footer{
       color: white;
     }
   }
+<<<<<<< HEAD
 }
 .product__list--admin {
   padding: 2rem;
@@ -625,3 +627,6 @@ footer{
     }
   }
 }
+=======
+}
+>>>>>>> 2c6c82e06b032a259a50a4b9e91358eee13d128e
