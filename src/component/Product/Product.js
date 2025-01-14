@@ -13,14 +13,20 @@ export function Product({ data, onView }) {
     const [views, setViews] = useState(0);
 
 
+
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
+
+
     useEffect(() => {
+        window.scrollTo(0,0);
         const storedViews = localStorage.getItem(`product-${data.id}-views`);
         if (storedViews) {
             setViews(parseInt(storedViews, 10));
         }
     }, [data.id]);
+
+
 
     const handleAddToCart = (product) => {
         if (!product || !product.id) {
@@ -30,6 +36,9 @@ export function Product({ data, onView }) {
 
         if (isAuthenticated) {
             dispatch(addToCart(product));
+
+            alert('sản phẩm đã được thêm vào giỏ hàng');
+
             console.log("Sản phẩm đã được thêm:", product);
         } else {
             alert('Bạn cần đăng nhập');
@@ -55,7 +64,7 @@ export function Product({ data, onView }) {
             <img src={data.productImageUrl} alt={data.name} className="product-image"/>
             <h2 className="product-name">{data.name}</h2>
             <p className="product-description">{data.description}</p>
-            <p className="product-price">{(data.price)} VND</p>
+            <p className="product-price">{(data.price.toLocaleString('vi-VN'))} VND</p>
             <div className="btn-group">
                 <button onClick={() => handleView(data)} className="btn-view">Xem</button>
                 <button onClick={() => handleAddToCart(data)} className="btn-add-to-cart">Thêm</button>
