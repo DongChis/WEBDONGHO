@@ -57,6 +57,10 @@ const Admin = () => {
         price: '',
         productImageUrl: '',
     });
+    const [orders, setOrders] = useState([]); // State để lưu danh sách order
+    const [selectedOrder, setSelectedOrder] = useState(null); // Đơn hàng đã chọn để hiển thị chi tiết
+    const [orderID, setOrderID] = useState(''); // Để nhập orderID khi tìm kiếm
+    const [showOrderList, setShowOrderList] = useState(true);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -128,6 +132,58 @@ const Admin = () => {
         }
     }, [currentPanel]);
 
+    // Hàm cấp quyền
+    const handleGrantRole = (userId, role) => {
+        const updatedRole = { userId, role };  // { userId: ..., role: true/false }
+
+        axios.post("http://localhost:5048/api/v1/user/grant-role", updatedRole)
+            .then(response => {
+                alert(`Cấp quyền thành công cho người dùng ${userId}`);
+                // Cập nhật lại danh sách người dùng sau khi cấp quyền
+                setUsers(prevUsers => prevUsers.map(user =>
+                    user.id === userId ? { ...user, role } : user
+                ));
+            })
+            .catch(error => {
+                console.error("Có lỗi khi cấp quyền:", error);
+                alert("Cấp quyền không thành công. Vui lòng thử lại.");
+            });
+    };
+
+    // Hàm xóa quyền
+    const handleRevokeRole = (userId) => {
+        axios.post("http://localhost:5048/api/v1/user/revoke-role", { userId })
+            .then(response => {
+                alert(`Đã xóa quyền người dùng ${userId}`);
+                // Cập nhật lại danh sách người dùng sau khi xóa quyền
+                setUsers(prevUsers => prevUsers.map(user =>
+                    user.id === userId ? { ...user, role: false } : user
+                ));
+            })
+            .catch(error => {
+                console.error("Có lỗi khi xóa quyền:", error);
+                alert("Xóa quyền không thành công. Vui lòng thử lại.");
+            });
+    };
+    // Lấy dữ liệu đơn hàng từ API
+    useEffect(() => {
+        if (currentPanel === "order") {
+            setLoading(true);
+            axios
+                .get("http://localhost:5048/api/v1/order")
+                .then((response) => {
+                    console.log(response.data); // Kiểm tra dữ liệu nhận được
+                    setOrders(response.data); // Lưu vào state
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error("Có lỗi khi lấy dữ liệu đơn hàng:", error);
+                    setLoading(false);
+                });
+        }
+    }, [currentPanel]);
+
+
     // Toggle the "Quản lý sản phẩm" section
     const handleProductManagementClick = () => {
         console.log("Product Management Clicked"); // Debugging line
@@ -185,6 +241,81 @@ const Admin = () => {
                 console.error("Có lỗi khi cập nhật sản phẩm:", error);
                 alert("Không thể cập nhật sản phẩm. Vui lòng thử lại.");
             });
+    };
+    // Hàm xóa đơn hàng
+    const handleDeleteOrder = (orderId) => {
+        // Gửi yêu cầu DELETE đến API
+        axios
+            .delete(`http://localhost:5048/api/v1/order/${orderId}`)
+            .then(() => {
+                // Cập nhật lại state orders sau khi xóa thành công
+                setOrders(orders.filter(order => order.OrderID !== orderId));
+                alert("Đơn hàng đã được xóa!");
+            })
+            .catch((error) => {
+                console.error("Có lỗi khi xóa đơn hàng:", error);
+                alert("Không thể xóa đơn hàng. Vui lòng thử lại.");
+            });
+    };
+    // Lấy tất cả đơn hàng khi component render
+    useEffect(() => {
+        if (orderID) {
+            // Gửi yêu cầu GET để lấy dữ liệu đơn hàng theo orderID
+            axios
+                .get(`http://localhost:5048/api/v1/order/${orderID}`)
+                .then((response) => {
+                    setOrders([response.data]); // Chỉ hiển thị đơn hàng với orderID cụ thể
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error("Lỗi khi lấy đơn hàng:", error);
+                    setLoading(false);
+                });
+        } else {
+            setLoading(false); // Nếu không có orderID, không thực hiện yêu cầu
+        }
+    }, [orderID]);
+
+    // Hàm hiển thị chi tiết sản phẩm trong đơn hàng
+    const renderOrderItems = (orderItems) => {
+        return (
+            <table className="order-items-table">
+                <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                {orderItems.map((item) => (
+                    <tr key={item.id}>
+                        <td>{item.productID}</td>
+                        <td>{item.quantity}</td>
+                        <td>{item.unitPrice.toLocaleString()}</td>
+                        <td>{(item.quantity * item.unitPrice).toLocaleString()}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+        );
+    };
+
+    // Hàm xử lý khi người dùng nhập orderID để tìm kiếm
+    const handleSearchOrder = () => {
+        setOrderID(orderID.trim()); // Nếu có orderID, thực hiện tìm kiếm
+    };
+// Hàm xử lý khi bấm vào "Xem đơn hàng"
+    const handleViewOrder = (order) => {
+        setSelectedOrder(order);
+        setShowOrderList(false); // Ẩn danh sách đơn hàng khi xem chi tiết
+    };
+
+    // Hàm quay lại danh sách đơn hàng
+    const handleBackToList = () => {
+        setShowOrderList(true);
+        setSelectedOrder(null); // Xóa trạng thái chọn đơn hàng
     };
     return(
         <>
@@ -465,26 +596,92 @@ const Admin = () => {
                                 Quản lý người dùng
                             </div>
                             {loading ? (
-                                <p>Loading users...</p> // Display loading text while data is being fetched
+                                <p>Loading users...</p> // Hiển thị trạng thái đang tải
                             ) : (
-                                <ul>
+                                <table className="user-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Tên người dùng</th>
+                                        <th>Vai trò</th>
+                                        <th>Cập nhật quyền</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
                                     {users.map((user) => (
-                                        <li key={user.id || user.name}>
-                                            <p>{user.email}</p>
-                                        </li> // Display each user's name (assuming they have an 'id' and 'name')
+                                        <tr key={user.id || user.name}>
+                                            <td>{user.email}</td>
+                                            <td>{user.userName}</td>
+                                            <td>{user.role ? "Admin" : "User"}</td>
+                                            <td>
+                                                <button onClick={() => handleGrantRole(user.id, true)}>Cấp quyền</button>
+                                                <button onClick={() => handleRevokeRole(user.id)}>Xoá Quyền</button>
+                                            </td>
+                                        </tr>
                                     ))}
-                                </ul>
+                                    </tbody>
+                                </table>
                             )}
                         </div>
                     )}
                     {currentPanel === "order" && (
-                        <div className="product__list--admin">
-                            <div className="product__list--title">
+                        <div className="order__list--admin">
+                            <div className="order__list--title">
                                 Quản lý đơn hàng
                             </div>
-                            <p>Danh sách sản phẩm sẽ hiển thị ở đây!</p>
+                            {/* Hiển thị danh sách đơn hàng nếu showOrderList là true */}
+                            {showOrderList && !loading && (
+                                <table className="order-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Mã khách hàng</th>
+                                        <th>Code đơn hàng</th>
+                                        <th>Thời gian</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {orders.map((order) => (
+                                        <tr key={order.orderID || order.orderCode}>
+                                            <td>{order.orderID}</td>
+                                            <td>{order.customerID}</td>
+                                            <td>{order.orderCode}</td>
+                                            <td>{order.orderDate}</td>
+                                            <td>{order.totalAmount}</td>
+                                            <td>{order.status}</td>
+                                            <td>
+                                                <button onClick={() => handleViewOrder(order)}>Xem đơn hàng</button>
+                                                <button onClick={() => handleDeleteOrder(order.orderID)}>Xoá</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            )}
+
+                            {/* Hiển thị chi tiết đơn hàng nếu selectedOrder có giá trị */}
+                            {selectedOrder && (
+                                <div className="order-details">
+                                    <button onClick={handleBackToList}>Trở lại danh sách</button>
+                                    <h3>Chi tiết đơn hàng {selectedOrder.orderCode}</h3>
+                                    <p><strong>Mã khách hàng:</strong> {selectedOrder.customerID}</p>
+                                    <p><strong>Thời gian:</strong> {selectedOrder.orderDate}</p>
+                                    <p><strong>Tổng tiền:</strong> {selectedOrder.totalAmount.toLocaleString()}</p>
+                                    <p><strong>Trạng thái:</strong> {selectedOrder.status}</p>
+
+                                    {/* Hiển thị sản phẩm trong đơn hàng */}
+                                    {renderOrderItems(selectedOrder.orderItems)}
+                                </div>
+                            )}
+
+                            {/* Hiển thị trạng thái đang tải */}
+                            {loading && <p>Loading orders...</p>}
                         </div>
                     )}
+
                 </div>
             </div>
         </>
