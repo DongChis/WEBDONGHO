@@ -93,6 +93,7 @@ const Checkout = () => {
       productID: item.id,
       quantity: item.quantity,
       unitPrice: item.price,
+      product: item.product,
     }));
     const totalAmount = orderItems.reduce(
       (total, item) => total + item.unitPrice * item.quantity,

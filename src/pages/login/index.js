@@ -318,8 +318,8 @@ const LoginModal = ({ isOpen, onClose }) => {
                   onChange={handleChange}
                   required
                 />
-                {/* Truyền giá trị mật khẩu vào PasswordStrengthChecker */}
-                <PasswordStrengthChecker password={formData.password} />
+                { isRegister && <PasswordStrengthChecker password={formData.password} />}
+
               </div>
               {isRegister && (
                 <div className="input-group">
