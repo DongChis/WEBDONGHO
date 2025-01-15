@@ -34,6 +34,7 @@ const ShoppingCart = () => {
     deliveryMethod: "",
   });
   const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -133,7 +134,7 @@ const ShoppingCart = () => {
   };
 
   const handleDeleteOrder = (orderID) => {
-    const confirmDelete = async () => {
+    const confirmDelete = async (closeToast) => {
       try {
         await deleteOrder(orderID);
         setOrders((prevOrders) =>
@@ -144,24 +145,25 @@ const ShoppingCart = () => {
         console.error("Error deleting order:", error);
         toast.error("Failed to delete order.");
       }
-      toast.dismiss();
+      closeToast();
     };
 
     toast(
       ({ closeToast }) => (
         <div>
           <p>Bạn có chắc chắn muốn xóa đơn hàng này?</p>
-          <button onClick={confirmDelete}>Yes</button>
+          <button onClick={() => confirmDelete(closeToast)}>Yes</button>
           <button onClick={closeToast}>No</button>
         </div>
       ),
       {
-        autoClose: true,
-        //delay the modal close
-        closeButton: false,
-        pauseOnHover: false,
+        autoClose: false,
       }
     );
+  };
+
+  const handleViewOrder = (order) => {
+    setSelectedOrder(order);
   };
 
   return (
@@ -223,9 +225,9 @@ const ShoppingCart = () => {
               <th>Status</th>
               <th>Address</th>
               <th>Delivery Method</th>
-              <th>Products Name</th>
+              <th>Items</th>
               <th>Total Price</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -242,9 +244,7 @@ const ShoppingCart = () => {
                 </td>
                 <td>{order.totalAmount.toLocaleString("de-DE")} VND</td>
                 <td>
-                  <button onClick={() => handleEditOrder(order)}>
-                    <FaEdit />
-                  </button>
+                  <button onClick={() => handleViewOrder(order)}>View</button>
                   <button onClick={() => handleDeleteOrder(order.orderID)}>
                     <FaTrash />
                   </button>
@@ -254,6 +254,81 @@ const ShoppingCart = () => {
           </tbody>
         </table>
       </div>
+
+      {selectedOrder && (
+        <Modal
+          isOpen={!!selectedOrder}
+          onRequestClose={() => setSelectedOrder(null)}
+          contentLabel="Order Details"
+          className="order-details-modal"
+          overlayClassName="edit-order-overlay"
+          shouldFocusAfterRender={false}
+        >
+          <div className="edit-order-form">
+            <h2>Chi Tiết Đơn Hàng</h2>
+            <p>
+              <strong>Order ID:</strong> {selectedOrder.orderID}
+            </p>
+            <p>
+              <strong>Order Code:</strong> {selectedOrder.orderCode}
+            </p>
+            <p>
+              <strong>Customer ID:</strong> {selectedOrder.customerID}
+            </p>
+            <p>
+              <strong>Total Amount:</strong>{" "}
+              {selectedOrder.totalAmount.toLocaleString("de-DE")} VND
+            </p>
+            <p>
+              <strong>Order Date:</strong>{" "}
+              {new Date(selectedOrder.orderDate).toLocaleString()}
+            </p>
+            <p>
+              <strong>Delivery Method:</strong> {selectedOrder.deliveryMethod}
+            </p>
+            <p>
+              <strong>Payment Method:</strong> {selectedOrder.paymentMethod}
+            </p>
+            <p>
+              <strong>Address:</strong> {selectedOrder.address}
+            </p>
+            <p>
+              <strong>Status:</strong> {selectedOrder.status}
+            </p>
+            <h3>Order Items</h3>
+            <ul>
+              {selectedOrder.orderItems.map((item) => (
+                <li key={item.id}>
+                  <p>
+                    <strong>Product Name:</strong> {item.product.name}
+                  </p>
+                  <p>
+                    <strong>Quantity:</strong> {item.quantity}
+                  </p>
+                  <p>
+                    <strong>Unit Price:</strong>{" "}
+                    {item.unitPrice.toLocaleString("de-DE")} VND
+                  </p>
+                  <img
+                    src={item.product.productImageUrl}
+                    alt={item.product.name}
+                    style={{ width: "100px" }}
+                  />
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => handleEditOrder(selectedOrder)}>
+              Edit Order
+            </button>
+            <button
+              className="close-button"
+              onClick={() => setSelectedOrder(null)}
+            >
+              Close
+            </button>
+          </div>
+        </Modal>
+      )}
 
       {editingOrder && (
         <Modal
