@@ -81,7 +81,7 @@ const Admin = () => {
 
         // Gửi yêu cầu POST để thêm sản phẩm
         axios
-            .post("http://localhost:5048/api/v1/product", newProduct)
+            .post("https://localhost:7032/api/v1/product", newProduct)
             .then((response) => {
                 setProducts((prevProducts) => [...prevProducts, response.data]); // Thêm sản phẩm mới vào danh sách
                 alert("Sản phẩm đã được thêm thành công!");
@@ -104,7 +104,7 @@ const Admin = () => {
     useEffect(() => {
         if (currentPanel === "product") {
             axios
-                .get(`http://localhost:5048/api/v1/product`) // Gửi yêu cầu GET đến API lấy sản phẩm
+                .get(`https://localhost:7032/api/v1/product`) // Gửi yêu cầu GET đến API lấy sản phẩm
                 .then((response) => {
                     setProducts(response.data); // Lưu dữ liệu sản phẩm vào state
                     console.log(response.data);
@@ -120,7 +120,7 @@ const Admin = () => {
     useEffect(() => {
         if (currentPanel === "user") {
             axios
-                .get('http://localhost:5048/api/v1/user') // Get users from the API
+                .get('https://localhost:7032/api/v1/user') // Get users from the API
                 .then((response) => {
                     setUsers(response.data); // Set the users to state
                     console.log(response.data)
@@ -137,7 +137,7 @@ const Admin = () => {
     const handleGrantRole = (userId, role) => {
         const updatedRole = { userId, role };  // { userId: ..., role: true/false }
 
-        axios.post("http://localhost:5048/api/v1/user/grant-role", updatedRole)
+        axios.post("https://localhost:7032/api/v1/user/grant-role", updatedRole)
             .then(response => {
                 alert(`Cấp quyền thành công cho người dùng ${userId}`);
                 // Cập nhật lại danh sách người dùng sau khi cấp quyền
@@ -153,7 +153,7 @@ const Admin = () => {
 
     // Hàm xóa quyền
     const handleRevokeRole = (userId) => {
-        axios.post("http://localhost:5048/api/v1/user/revoke-role", { userId })
+        axios.post("https://localhost:7032/api/v1/user/revoke-role", { userId })
             .then(response => {
                 alert(`Đã xóa quyền người dùng ${userId}`);
                 // Cập nhật lại danh sách người dùng sau khi xóa quyền
@@ -171,7 +171,7 @@ const Admin = () => {
         if (currentPanel === "order") {
             setLoading(true);
             axios
-                .get("http://localhost:5048/api/v1/order")
+                .get("https://localhost:7032/api/v1/order")
                 .then((response) => {
                     console.log(response.data); // Kiểm tra dữ liệu nhận được
                     setOrders(response.data); // Lưu vào state
@@ -207,7 +207,7 @@ const Admin = () => {
         // Xác nhận trước khi xóa
         if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
             axios
-                .delete(`http://localhost:5048/api/v1/product/${productId}`) // Gửi yêu cầu DELETE
+                .delete(`https://localhost:7032/api/v1/product/${productId}`) // Gửi yêu cầu DELETE
                 .then(() => {
                     // Cập nhật danh sách sản phẩm sau khi xóa
                     setProducts((prevProducts) =>
@@ -227,7 +227,7 @@ const Admin = () => {
     };
     const handleUpdateProduct = (updatedProduct) => {
         axios
-            .put(`http://localhost:5048/api/v1/product/${updatedProduct.id}`, updatedProduct)
+            .put(`https://localhost:7032/api/v1/product/${updatedProduct.id}`, updatedProduct)
             .then(() => {
                 // Cập nhật danh sách sản phẩm sau khi chỉnh sửa
                 setProducts((prevProducts) =>
@@ -247,7 +247,7 @@ const Admin = () => {
     const handleDeleteOrder = (orderId) => {
         // Gửi yêu cầu DELETE đến API
         axios
-            .delete(`http://localhost:5048/api/v1/order/${orderId}`)
+            .delete(`https://localhost:7032/api/v1/order/${orderId}`)
             .then(() => {
                 // Cập nhật lại state orders sau khi xóa thành công
                 setOrders(orders.filter(order => order.OrderID !== orderId));
@@ -260,10 +260,11 @@ const Admin = () => {
     };
     // Lấy tất cả đơn hàng khi component render
     useEffect(() => {
+
         if (orderID) {
             // Gửi yêu cầu GET để lấy dữ liệu đơn hàng theo orderID
             axios
-                .get(`http://localhost:5048/api/v1/order/${orderID}`)
+                .get(`https://localhost:7032/api/v1/order/${orderID}`)
                 .then((response) => {
                     setOrders([response.data]); // Chỉ hiển thị đơn hàng với orderID cụ thể
                     setLoading(false);
@@ -283,16 +284,21 @@ const Admin = () => {
             <table className="order-items-table">
                 <thead>
                 <tr>
-                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Image</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
                     <th>Total Price</th>
+
                 </tr>
                 </thead>
                 <tbody>
                 {orderItems.map((item) => (
                     <tr key={item.id}>
-                        <td>{item.productID}</td>
+                        <td>{item.product.title}</td>
+                        <td><img src={item.product.productImageUrl}
+                                 alt={item.product.name}
+                                 style={{ width: "50px", height: "50px", objectFit: "cover" }}/> </td>
                         <td>{item.quantity}</td>
                         <td>{item.unitPrice.toLocaleString()}</td>
                         <td>{(item.quantity * item.unitPrice).toLocaleString()}</td>
@@ -475,6 +481,81 @@ const Admin = () => {
                             ) : (
                                 // Nếu không có sản phẩm đang chỉnh sửa, hiển thị danh sách sản phẩm
                                 <>
+                                    <div className="add__NewProduct">
+                                        <button onClick={() => setShowProductManagement(true)}>Thêm Sản Phẩm</button>
+                                        {showProductManagement && (
+                                            <form onSubmit={handleAddProduct}>
+                                                <label>
+                                                    Tên sản phẩm:
+                                                    <input
+                                                        type="text"
+                                                        name="title"
+                                                        placeholder="Tên sản phẩm"
+                                                        value={newProduct.title}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                </label>
+                                                <label>
+                                                    Name:
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        placeholder="Name"
+                                                        value={newProduct.name}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                </label>
+                                                <label>
+                                                    Giới tính:
+                                                    <select
+                                                        name="gender"
+                                                        value={newProduct.gender}
+                                                        onChange={handleInputChange}
+                                                    >
+                                                        <option value="male">Nam</option>
+                                                        <option value="female">Nữ</option>
+                                                        <option value="other">Khác</option>
+                                                    </select>
+                                                </label>
+                                                <label>
+                                                    Mô tả sản phẩm:
+                                                    <textarea
+                                                        name="description"
+                                                        placeholder="Mô tả sản phẩm"
+                                                        value={newProduct.description}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                </label>
+                                                <label>
+                                                    Giá sản phẩm:
+                                                    <input
+                                                        type="number"
+                                                        name="price"
+                                                        placeholder="Giá sản phẩm"
+                                                        value={newProduct.price}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                </label>
+                                                <label>
+                                                    URL ảnh:
+                                                    <input
+                                                        type="text"
+                                                        name="productImageUrl"
+                                                        placeholder="URL ảnh"
+                                                        value={newProduct.productImageUrl}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                </label>
+                                                <div className="edit__product--actions">
+                                                    <button type="submit">Thêm sản phẩm</button>
+                                                    <button type="button"
+                                                            onClick={() => setShowProductManagement(false)}>
+                                                        Hủy
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        )}
+                                    </div>
                                     {products && products.length > 0 ? (
                                         <table className="product__table">
                                             <thead>
@@ -492,7 +573,8 @@ const Admin = () => {
                                             {products.map((product) => (
                                                 <tr key={product.id || product.name}>
                                                     <td>
-                                                        <img className="product__img" src={product.productImageUrl} alt={product.title} />
+                                                        <img className="product__img" src={product.productImageUrl}
+                                                             alt={product.title}/>
                                                     </td>
                                                     <td>{product.title}</td>
                                                     <td>{product.name}</td>
@@ -500,8 +582,11 @@ const Admin = () => {
                                                     <td>{product.description}</td>
                                                     <td>{product.price} VND</td>
                                                     <td>
-                                                        <button className="edit__btn"  onClick={() => handleEditProduct(product)}>Edit</button>
-                                                        <button className="delete__btn" onClick={() => handleDeleteProduct(product.id)}>
+                                                        <button className="edit__btn"
+                                                                onClick={() => handleEditProduct(product)}>Edit
+                                                        </button>
+                                                        <button className="delete__btn"
+                                                                onClick={() => handleDeleteProduct(product.id)}>
                                                             Delete
                                                         </button>
                                                     </td>

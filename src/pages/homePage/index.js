@@ -118,36 +118,40 @@ const HomePage = () => {
     const tabList = [];
     const tabPanels = [];
 
-    Object.keys(data).forEach((title) => {
-      tabList.push(<Tab key={title}>{title}</Tab>);
+    Object.keys(data).forEach((title, index) => {
+      tabList.push(
+          <Tab key={`tab-${index}`} onClick={(e) => e.preventDefault()}>
+            {title}
+          </Tab>
+      );
       const products = data[title].map((product, idx) => (
-        <Product
-          key={product.id || `${title}-${idx}`}
-          data={product}
-          onView={handleProductView}
-        />
+          <Product
+              key={product.id || `${title}-${idx}`}
+              data={product}
+              onView={handleProductView}
+          />
       ));
       tabPanels.push(
-        <TabPanel key={title}>
-          {data[title].length > 3 ? (
-            <Slider {...sliderSettings}>{products}</Slider>
-          ) : (
-            <div className="row">{products}</div>
-          )}
-        </TabPanel>
+          <TabPanel key={`panel-${index}`}>
+            {data[title].length > 3 ? (
+                <Slider {...sliderSettings}>{products}</Slider>
+            ) : (
+                <div className="row">{products}</div>
+            )}
+          </TabPanel>
       );
     });
 
     return (
-      <div className="container">
-        <div className="section-title">
-          <h2>{sectionTitle}</h2>
-          <Tabs>
-            <TabList>{tabList}</TabList>
-            {tabPanels}
-          </Tabs>
+        <div className="container">
+          <div className="section-title">
+            <h2>{sectionTitle}</h2>
+            <Tabs forceRenderTabPanel={true}>
+              <TabList>{tabList}</TabList>
+              {tabPanels}
+            </Tabs>
+          </div>
         </div>
-      </div>
     );
   };
 
@@ -157,16 +161,16 @@ const HomePage = () => {
     }
 
     const products = recentlyViewed.map((product, idx) => (
-      <Product key={product.id || `recent-${idx}`} data={product} />
+        <Product key={product.id || `recent-${idx}`} data={product} />
     ));
 
     return (
-      <div className="container">
-        <div className="section-title">
-          <h2>SẢN PHẨM GẦN ĐÂY ĐÃ XEM</h2>
-          <div className="row">{products}</div>
+        <div className="container">
+          <div className="section-title">
+            <h2>SẢN PHẨM GẦN ĐÂY ĐÃ XEM</h2>
+            <div className="row">{products}</div>
+          </div>
         </div>
-      </div>
     );
   };
   const renderRecentlyAdded = () => {
@@ -175,39 +179,39 @@ const HomePage = () => {
     }
 
     const products = newProducts.map((product, idx) => (
-      <Product key={product.id || `new-${idx}`} data={product} />
+        <Product key={product.id || `new-${idx}`} data={product} />
     ));
 
     return (
-      <div className="container">
-        <div className="section-title">
-          <h2>SẢN PHẨM MỚI NHẤT</h2>
-          <div className="row">{products}</div>
+        <div className="container">
+          <div className="section-title">
+            <h2>SẢN PHẨM MỚI NHẤT</h2>
+            <div className="row">{products}</div>
+          </div>
         </div>
-      </div>
     );
   };
 
   const productsArray = Array.isArray(products)
-    ? products
-    : Object.values(products);
+      ? products
+      : Object.values(products);
   const groupedProducts = groupProductsByTitle(productsArray);
 
   return (
-    <>
-      {loading ? (
-        <div className="loading">Loading...</div>
-      ) : error ? (
-        <div className="error">{error}</div>
-      ) : (
-        <>
-          {groupedProducts &&
-            renderProducts(groupedProducts, "THƯƠNG HIỆU ĐỒNG HỒ")}
-          {renderRecentlyAdded()}
-          {renderRecentlyViewed()}
-        </>
-      )}
-    </>
+      <>
+        {loading ? (
+            <div className="loading">Loading...</div>
+        ) : error ? (
+            <div className="error">{error}</div>
+        ) : (
+            <>
+              {groupedProducts &&
+                  renderProducts(groupedProducts, "THƯƠNG HIỆU ĐỒNG HỒ")}
+              {renderRecentlyAdded()}
+              {renderRecentlyViewed()}
+            </>
+        )}
+      </>
   );
 };
 
