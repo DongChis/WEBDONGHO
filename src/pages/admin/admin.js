@@ -9,7 +9,8 @@ const data = {
   datasets: [
     {
       label: "Doanh thu (VNĐ)", // Chú thích
-      data: [12000000, 15000000, 20000000, 22000000, 25000000, 30000000], // Dữ liệu trục Y
+      data: [12000000, 15000000,
+        20000000, 22000000, 25000000, 30000000], // Dữ liệu trục Y
       backgroundColor: [
         "rgba(75, 192, 192, 0.2)", // Màu nền
       ],
@@ -83,7 +84,7 @@ const Admin = () => {
 
     // Gửi yêu cầu POST để thêm sản phẩm
     axios
-      .post("http://localhost:5048/api/v1/product", newProduct)
+      .post("https://localhost:7032/api/v1/product", newProduct)
       .then((response) => {
         setProducts((prevProducts) => [...prevProducts, response.data]); // Thêm sản phẩm mới vào danh sách
         alert("Sản phẩm đã được thêm thành công!");
@@ -106,7 +107,7 @@ const Admin = () => {
   useEffect(() => {
     if (currentPanel === "product") {
       axios
-        .get(`http://localhost:5048/api/v1/product`) // Gửi yêu cầu GET đến API lấy sản phẩm
+        .get(`https://localhost:7032/api/v1/product`) // Gửi yêu cầu GET đến API lấy sản phẩm
         .then((response) => {
           setProducts(response.data); // Lưu dữ liệu sản phẩm vào state
           console.log(response.data);
@@ -122,7 +123,7 @@ const Admin = () => {
   useEffect(() => {
     if (currentPanel === "user") {
       axios
-        .get("http://localhost:5048/api/v1/user") // Get users from the API
+        .get("https://localhost:7032/api/v1/user") // Get users from the API
         .then((response) => {
           setUsers(response.data); // Set the users to state
           console.log(response.data);
@@ -156,7 +157,7 @@ const Admin = () => {
     // Xác nhận trước khi xóa
     if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
       axios
-        .delete(`http://localhost:5048/api/v1/product/${productId}`) // Gửi yêu cầu DELETE
+        .delete(`https://localhost:7032/api/v1/product/${productId}`) // Gửi yêu cầu DELETE
         .then(() => {
           // Cập nhật danh sách sản phẩm sau khi xóa
           setProducts((prevProducts) =>
@@ -177,7 +178,7 @@ const Admin = () => {
   const handleUpdateProduct = (updatedProduct) => {
     axios
       .put(
-        `http://localhost:5048/api/v1/product/${updatedProduct.id}`,
+        `https://localhost:7032/api/v1/product/${updatedProduct.id}`,
         updatedProduct
       )
       .then(() => {
