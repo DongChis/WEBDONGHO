@@ -27,3 +27,6 @@ export const fetchNewProducts = createAsyncThunk(
     return response; // Trả về dữ liệu sản phẩm
   }
 );
+
+
+
